@@ -6,10 +6,12 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div *ngIf="isLoading" class="flex justify-center items-center py-8">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
-      <span class="ml-2 text-gray-600">{{ message }}</span>
-    </div>
+    @if (isLoading) {
+      <div class="flex justify-center items-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+        <span class="ml-2 text-gray-600">{{ message }}</span>
+      </div>
+    }
   `
 })
 export class LoadingSpinnerComponent {

@@ -34,816 +34,655 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
 
+# Development Guidelines - Adding New Requirements
 
-example of structure and programming style
-// ========================
-// REFACTORED: FUNCTIONAL APPROACH - NO DI TOKENS
-// ========================
+## 📋 **Overview**
 
-// 1. SIMPLIFIED DEPENDENCIES - PURE FUNCTIONS
-// ========================
+This guide provides step-by-step instructions for adding new features to the ComplianceCore application while maintaining architectural consistency, code quality, and design standards.
 
-// src/app/core/functions/io.functions.ts
-export const ioFunctions = {
-  // HTTP functions
-  httpGet: (url: string) => async () => {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+## 🏗️ **Architecture Patterns**
+
+### Core Architecture
+Our application follows these patterns:
+- **Functional Reactive Programming** with Angular Signals
+- **Clean Architecture** with Use Cases and Facades
+- **Container/Presentation** component pattern
+- **Consistent Layout** system
+
+### File Structure
+```
+src/app/
+├── core/
+│   ├── facades/           # State management
+│   ├── functions/         # Pure functions (API, IO, System)
+│   ├── use-cases/         # Business logic
+│   └── models/           # TypeScript interfaces
+├── features/
+│   └── [feature-name]/
+│       ├── overview/     # List/overview pages
+│       ├── add/          # Creation flows
+│       ├── edit/         # Editing flows
+│       └── details/      # Detail views
+├── shared/
+│   └── components/       # Reusable UI components
+└── layout.component.ts   # Main layout wrapper
+```
+
+## 🚀 **Step-by-Step Process**
+
+### Step 1: Define Requirements & Models
+
+#### 1.1 Create Data Models
+```typescript
+// src/app/core/models/[feature].model.ts
+export interface YourEntity {
+  id: string;
+  name: string;
+  status: 'active' | 'inactive' | 'pending';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateYourEntityRequest {
+  name: string;
+  // ... other required fields
+}
+
+export interface UpdateYourEntityRequest {
+  id: string;
+  name?: string;
+  // ... other optional fields
+}
+```
+
+#### 1.2 Update Backend Data (db.json)
+```json
+{
+  "yourEntities": [
+    {
+      "id": "1",
+      "name": "Example Entity",
+      "status": "active",
+      "createdAt": "2024-01-20T10:00:00Z",
+      "updatedAt": "2024-01-20T10:00:00Z"
     }
-    return response.json();
-  },
+  ]
+}
+```
 
-  httpPost: (url: string, data: any) => async () => {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    return response.json();
-  },
+### Step 2: Create API Functions
 
-  httpPut: (url: string, data: any) => async () => {
-    const response = await fetch(url, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    return response.json();
-  }
-};
-
-// src/app/core/functions/system.functions.ts
-export const systemFunctions = {
-  // Time functions
-  nowISO: () => () => new Date().toISOString(),
-  
-  // ID generation functions
-  generateId: () => () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-  
-  generateTicketNumbers: (quantity: number) => () => {
-    const tickets: string[] = [];
-    for (let i = 0; i < quantity; i++) {
-      const ticketNumber = `T${Date.now()}${String(i).padStart(3, '0')}`;
-      tickets.push(ticketNumber);
-    }
-    return tickets;
-  },
-
-  // Validation functions
-  validateEmail: (email: string) => () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-};
-
+#### 2.1 Add API Functions
+```typescript
 // src/app/core/functions/api.functions.ts
-const BASE_URL = 'http://localhost:3000';
-
 export const apiFunctions = {
-  // Event API functions
-  loadEvents: () => ioFunctions.httpGet(`${BASE_URL}/events`),
+  // ... existing functions
   
-  loadEventById: (id: string) => ioFunctions.httpGet(`${BASE_URL}/events/${id}`),
-  
-  updateEvent: (event: any) => ioFunctions.httpPut(`${BASE_URL}/events/${event.id}`, event),
-
-  // Ticket API functions  
-  loadTickets: () => ioFunctions.httpGet(`${BASE_URL}/tickets`),
-  
-  saveTicket: (ticket: any) => ioFunctions.httpPost(`${BASE_URL}/tickets`, ticket)
+  // Add new entity functions
+  loadYourEntities: () => ioFunctions.httpGet('http://localhost:3000/yourEntities'),
+  createYourEntity: (entity: CreateYourEntityRequest) => 
+    ioFunctions.httpPost('http://localhost:3000/yourEntities', entity),
+  updateYourEntity: (id: string, entity: UpdateYourEntityRequest) => 
+    ioFunctions.httpPut(`http://localhost:3000/yourEntities/${id}`, entity),
+  deleteYourEntity: (id: string) => 
+    ioFunctions.httpDelete(`http://localhost:3000/yourEntities/${id}`)
 };
+```
 
-// ========================
-// 2. REFACTORED USE CASES - FUNCTIONS RETURNING FUNCTIONS
-// ========================
+### Step 3: Create Use Cases
 
-// src/app/core/use-cases/list-events.usecase.ts
-import { Event, ApiResponse } from '../models';
+#### 3.1 CRUD Use Cases
+```typescript
+// src/app/core/use-cases/your-entity-crud.usecase.ts
+import { YourEntity, CreateYourEntityRequest, UpdateYourEntityRequest } from '../models/your-entity.model';
 import { apiFunctions } from '../functions/api.functions';
-import { withErrorHandling } from '../utils/error-handler.util';
 
-// Use case factory - returns a function
-export const createListEventsUseCase = () => {
-  return withErrorHandling(
-    async (): Promise<Event[]> => {
-      const loadEvents = apiFunctions.loadEvents();
-      return await loadEvents();
-    },
-    'Failed to load events'
-  );
-};
-
-// src/app/core/use-cases/purchase-ticket.usecase.ts
-import { PurchaseRequest, Ticket, Event, ApiResponse } from '../models';
-import { apiFunctions } from '../functions/api.functions';
-import { systemFunctions } from '../functions/system.functions';
-
-// Validation helper
-function validatePurchaseRequest(request: PurchaseRequest): ApiResponse<null> | null {
-  const validationErrors: Array<{ field: string; reason: string }> = [];
-  
-  if (!request.customerName?.trim()) {
-    validationErrors.push({ field: 'customerName', reason: 'required' });
-  }
-  
-  if (!request.customerEmail?.trim()) {
-    validationErrors.push({ field: 'customerEmail', reason: 'required' });
-  } else {
-    const validateEmail = systemFunctions.validateEmail(request.customerEmail);
-    if (!validateEmail()) {
-      validationErrors.push({ field: 'customerEmail', reason: 'invalid_format' });
-    }
-  }
-  
-  if (!request.quantity || request.quantity < 1) {
-    validationErrors.push({ field: 'quantity', reason: 'must_be_positive' });
-  }
-  
-  if (request.quantity > 10) {
-    validationErrors.push({ field: 'quantity', reason: 'max_10_tickets' });
-  }
-  
-  if (validationErrors.length > 0) {
-    return {
-      success: false,
-      type: 'VALIDATION_ERROR',
-      message: 'Validation failed',
-      errors: validationErrors
-    };
-  }
-  
-  return null;
+export function createListYourEntitiesUseCase(): () => Promise<YourEntity[]> {
+  return async () => {
+    return await apiFunctions.loadYourEntities()();
+  };
 }
 
-// Business logic helper
-async function executePurchase(request: PurchaseRequest): Promise<Ticket> {
-  // Load event
-  const loadEventById = apiFunctions.loadEventById(request.eventId);
-  const event = await loadEventById();
-  
-  if (!event) {
-    throw new Error('Event not found');
-  }
-
-  if (event.status !== 'active') {
-    throw new Error('Event is not available for purchase');
-  }
-
-  if (event.availableTickets < request.quantity) {
-    throw new Error(`Only ${event.availableTickets} tickets available`);
-  }
-
-  // Create ticket
-  const generateId = systemFunctions.generateId();
-  const generateTicketNumbers = systemFunctions.generateTicketNumbers(request.quantity);
-  const nowISO = systemFunctions.nowISO();
-  
-  const now = nowISO();
-  const ticket: Ticket = {
-    id: generateId(),
-    eventId: request.eventId,
-    customerName: request.customerName.trim(),
-    customerEmail: request.customerEmail.trim().toLowerCase(),
-    quantity: request.quantity,
-    totalPrice: event.price * request.quantity,
-    purchaseDate: now,
-    status: 'confirmed',
-    ticketNumbers: generateTicketNumbers(),
-    createdAt: now,
-    updatedAt: now
+export function createCreateYourEntityUseCase(): (data: CreateYourEntityRequest) => Promise<YourEntity> {
+  return async (data: CreateYourEntityRequest) => {
+    return await apiFunctions.createYourEntity(data)();
   };
-
-  // Update event availability
-  const updatedEvent: Event = {
-    ...event,
-    availableTickets: event.availableTickets - request.quantity,
-    status: event.availableTickets - request.quantity === 0 ? 'sold-out' : event.status,
-    updatedAt: now
-  };
-
-  // Save both ticket and updated event
-  const saveTicket = apiFunctions.saveTicket(ticket);
-  const updateEvent = apiFunctions.updateEvent(updatedEvent);
-  
-  await saveTicket();
-  await updateEvent();
-
-  return ticket;
 }
 
-// Use case factory - returns a function
-export const createPurchaseTicketUseCase = () => {
-  return async (request: PurchaseRequest): Promise<ApiResponse<Ticket>> => {
-    // Validation phase
-    const validationError = validatePurchaseRequest(request);
-    if (validationError) {
-      return validationError;
-    }
-
-    // Business logic phase with error handling
-    try {
-      const ticket = await executePurchase(request);
-      return {
-        success: true,
-        message: 'Ticket purchased successfully',
-        data: ticket
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to purchase ticket';
-      
-      // Determine error type based on message
-      if (errorMessage.includes('not found') || errorMessage.includes('not available') || errorMessage.includes('tickets available')) {
-        return {
-          success: false,
-          type: 'BUSINESS_ERROR',
-          message: errorMessage
-        };
-      }
-      
-      return {
-        success: false,
-        type: 'SYSTEM_ERROR',
-        message: 'Failed to purchase ticket'
-      };
-    }
+export function createUpdateYourEntityUseCase(): (id: string, data: UpdateYourEntityRequest) => Promise<YourEntity> {
+  return async (id: string, data: UpdateYourEntityRequest) => {
+    return await apiFunctions.updateYourEntity(id, data)();
   };
-};
+}
 
-// src/app/core/use-cases/list-tickets.usecase.ts
-import { Ticket } from '../models';
-import { apiFunctions } from '../functions/api.functions';
-import { withErrorHandling } from '../utils/error-handler.util';
+export function createDeleteYourEntityUseCase(): (id: string) => Promise<void> {
+  return async (id: string) => {
+    await apiFunctions.deleteYourEntity(id)();
+  };
+}
+```
 
-// Use case factory - returns a function
-export const createListTicketsUseCase = () => {
-  return withErrorHandling(
-    async (): Promise<Ticket[]> => {
-      const loadTickets = apiFunctions.loadTickets();
-      return await loadTickets();
-    },
-    'Failed to load tickets'
-  );
-};
+### Step 4: Create Facade
 
-// ========================
-// 3. SIMPLIFIED FACADES - NO DI TOKENS
-// ========================
-
-// src/app/core/facades/events.facade.ts
+#### 4.1 State Management Facade
+```typescript
+// src/app/core/facades/your-entity.facade.ts
 import { Injectable, signal, computed, effect } from '@angular/core';
-import { Event } from '../models';
-import { createListEventsUseCase } from '../use-cases/list-events.usecase';
+import { YourEntity, CreateYourEntityRequest, UpdateYourEntityRequest } from '../models/your-entity.model';
+import {
+  createListYourEntitiesUseCase,
+  createCreateYourEntityUseCase,
+  createUpdateYourEntityUseCase,
+  createDeleteYourEntityUseCase
+} from '../use-cases/your-entity-crud.usecase';
 
 @Injectable({ providedIn: 'root' })
-export class EventsFacade {
-  // Data version trigger for reactive updates
-  private readonly _dataVersion = signal(0);
+export class YourEntityFacade {
+  private readonly listUseCase = createListYourEntitiesUseCase();
+  private readonly createUseCase = createCreateYourEntityUseCase();
+  private readonly updateUseCase = createUpdateYourEntityUseCase();
+  private readonly deleteUseCase = createDeleteYourEntityUseCase();
   
-  // State managers
-  readonly categoryFilter = signal<'all' | 'music' | 'theater' | 'sports' | 'other'>('all');
-  readonly statusFilter = signal<'all' | 'active' | 'sold-out' | 'inactive'>('all');
-  readonly lastError = signal<string | null>(null);
-  readonly isLoading = signal(false);
-
-  // Use case function - created once
-  private readonly listEventsUseCase = createListEventsUseCase();
-
-  // Private cached data
-  private readonly _cachedEvents = signal<Event[]>([]);
+  private readonly _dataVersion = signal(0);
+  private readonly _cachedEntities = signal<YourEntity[]>([]);
   private readonly _cachedError = signal<string | null>(null);
+  readonly isLoading = signal(false);
+  readonly lastError = signal<string | null>(null);
 
-  // PURE computed - no side effects
-  readonly events = computed(() => {
-    this._dataVersion(); // Subscribe to changes
-    return this._cachedEvents();
+  // Computed properties
+  readonly entities = computed(() => {
+    this._dataVersion();
+    return this._cachedEntities();
   });
 
+  readonly activeEntities = computed(() => 
+    this.entities().filter(entity => entity.status === 'active').length
+  );
+
+  readonly totalEntities = computed(() => this.entities().length);
+
   // Effect handles async operations
-  private _loadEventsEffect = effect(async () => {
+  private _loadEffect = effect(async () => {
     const version = this._dataVersion();
     if (version > 0) {
-      this.isLoading.set(true);
-      const result = await this.listEventsUseCase();
-      
-      if (result.success) {
-        this._cachedEvents.set(result.data);
-        this._cachedError.set(null);
-      } else {
-        this._cachedError.set(result.message);
-      }
+      await this._performLoad();
+    }
+  });
+
+  private _errorEffect = effect(() => {
+    const error = this._cachedError();
+    this.lastError.set(error);
+  });
+
+  constructor() {
+    this.loadEntities();
+  }
+
+  private async _performLoad() {
+    this.isLoading.set(true);
+    try {
+      const result = await this.listUseCase();
+      this._cachedEntities.set(result);
+      this._cachedError.set(null);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to load entities';
+      this._cachedError.set(message);
+    } finally {
       this.isLoading.set(false);
     }
-  });
-
-  // Effect to update lastError
-  private _errorEffect = effect(() => {
-    const error = this._cachedError();
-    this.lastError.set(error);
-  });
-
-  // Derived computed state
-  readonly totalEvents = computed(() => this.events().length);
-  
-  readonly activeEvents = computed(() => 
-    this.events().filter(e => e.status === 'active')
-  );
-
-  readonly filteredEvents = computed(() => {
-    const categoryFilter = this.categoryFilter();
-    const statusFilter = this.statusFilter();
-    const events = this.events();
-
-    return events.filter(event => {
-      const matchesCategory = categoryFilter === 'all' || event.category === categoryFilter;
-      const matchesStatus = statusFilter === 'all' || event.status === statusFilter;
-      return matchesCategory && matchesStatus;
-    });
-  });
-
-  constructor() {
-    this.loadEvents();
   }
 
-  // Public operations
-  loadEvents() {
+  // Public methods
+  loadEntities() {
     this._dataVersion.update(v => v + 1);
   }
 
-  setCategoryFilter(category: 'all' | 'music' | 'theater' | 'sports' | 'other') {
-    this.categoryFilter.set(category);
-  }
-
-  setStatusFilter(status: 'all' | 'active' | 'sold-out' | 'inactive') {
-    this.statusFilter.set(status);
-  }
-
-  clearError() {
-    this.lastError.set(null);
-  }
-
-  getEventById(id: string): Event | undefined {
-    return this.events().find(event => event.id === id);
-  }
-
-  // Utility methods
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(price);
-  }
-
-  formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
-}
-
-// src/app/core/facades/tickets.facade.ts
-import { Injectable, signal, computed, effect } from '@angular/core';
-import { Ticket, PurchaseRequest } from '../models';
-import { createListTicketsUseCase } from '../use-cases/list-tickets.usecase';
-import { createPurchaseTicketUseCase } from '../use-cases/purchase-ticket.usecase';
-
-@Injectable({ providedIn: 'root' })
-export class TicketsFacade {
-  // Data version trigger for reactive updates
-  private readonly _dataVersion = signal(0);
-  
-  // State managers
-  readonly lastError = signal<string | null>(null);
-  readonly isLoading = signal(false);
-
-  // Use case functions - created once
-  private readonly listTicketsUseCase = createListTicketsUseCase();
-  private readonly purchaseTicketUseCase = createPurchaseTicketUseCase();
-
-  // Private cached data
-  private readonly _cachedTickets = signal<Ticket[]>([]);
-  private readonly _cachedError = signal<string | null>(null);
-
-  // PURE computed - no side effects
-  readonly tickets = computed(() => {
-    this._dataVersion(); // Subscribe to changes
-    return this._cachedTickets();
-  });
-
-  // Effect handles async operations
-  private _loadTicketsEffect = effect(async () => {
-    const version = this._dataVersion();
-    if (version > 0) {
-      const result = await this.listTicketsUseCase();
-      
-      if (result.success) {
-        this._cachedTickets.set(result.data);
-        this._cachedError.set(null);
-      } else {
-        this._cachedError.set(result.message);
-      }
-    }
-  });
-
-  // Effect to update lastError
-  private _errorEffect = effect(() => {
-    const error = this._cachedError();
-    this.lastError.set(error);
-  });
-
-  // Derived computed state
-  readonly totalRevenue = computed(() => {
-    return this.tickets().reduce((sum, ticket) => sum + ticket.totalPrice, 0);
-  });
-
-  readonly ticketsSoldCount = computed(() => {
-    return this.tickets().reduce((sum, ticket) => sum + ticket.quantity, 0);
-  });
-
-  constructor() {
-    this.loadTickets();
-  }
-
-  // Public operations
-  loadTickets() {
-    this._dataVersion.update(v => v + 1);
-  }
-
-  async purchaseTickets(request: PurchaseRequest) {
+  async createEntity(entity: CreateYourEntityRequest) {
     this.isLoading.set(true);
-    this.lastError.set(null);
-
-    const result = await this.purchaseTicketUseCase(request);
+    this._cachedError.set(null);
     
-    if (!result.success) {
-      this.lastError.set(result.message);
-    } else {
-      // Refresh tickets to get updated data
-      this._dataVersion.update(v => v + 1);
+    try {
+      await this.createUseCase(entity);
+      this.loadEntities();
+      return { success: true };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to create entity';
+      this._cachedError.set(message);
+      return { success: false, error: message };
+    } finally {
+      this.isLoading.set(false);
     }
-    
-    this.isLoading.set(false);
-    return result;
+  }
+
+  async updateEntity(id: string, entity: UpdateYourEntityRequest) {
+    this.isLoading.set(true);
+    try {
+      await this.updateUseCase(id, entity);
+      this.loadEntities();
+      return { success: true };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to update entity';
+      this._cachedError.set(message);
+      return { success: false, error: message };
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  async deleteEntity(id: string) {
+    this.isLoading.set(true);
+    try {
+      await this.deleteUseCase(id);
+      this.loadEntities();
+      return { success: true };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to delete entity';
+      this._cachedError.set(message);
+      return { success: false, error: message };
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   clearError() {
+    this._cachedError.set(null);
     this.lastError.set(null);
   }
-
-  getTicketsForEvent(eventId: string): Ticket[] {
-    return this.tickets().filter(ticket => ticket.eventId === eventId);
-  }
-
-  getEventTicketCount(eventId: string): number {
-    return this.tickets()
-      .filter(ticket => ticket.eventId === eventId)
-      .reduce((sum, ticket) => sum + ticket.quantity, 0);
-  }
-
-  getEventRevenue(eventId: string): number {
-    return this.tickets()
-      .filter(ticket => ticket.eventId === eventId)
-      .reduce((sum, ticket) => sum + ticket.totalPrice, 0);
-  }
-
-  // Utility methods
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(price);
-  }
 }
+```
 
-// ========================
-// 4. SIMPLIFIED APP CONFIG - NO DI TOKENS
-// ========================
+### Step 5: Create Components
 
-// src/app/app.config.ts
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    importProvidersFrom(BrowserModule)
-    // No more dependency injection tokens needed!
-  ]
-};
-
-// ========================
-// 5. UPDATED SMART COMPONENT - SAME AS BEFORE
-// ========================
-
-// src/app/features/events/smart/events-smart.component.ts
-// (This remains exactly the same - just inject facades directly)
-import { Component, inject, computed, signal } from '@angular/core';
+#### 5.1 Overview Container Component
+```typescript
+// src/app/features/your-feature/overview/your-feature-overview-container.component.ts
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EventsFacade } from '../../../core/facades/events.facade';
-import { TicketsFacade } from '../../../core/facades/tickets.facade';
-import { NotificationService } from '../../../core/services/notification.service';
-import { PurchaseRequest } from '../../../core/models';
-import { 
-  EventCardWithPurchasePresentation,
-  PurchaseFormData,
-  FilterBarPresentation, 
-  FilterState,
-  ErrorBannerPresentation,
-  LoadingSpinnerPresentation
-} from '../../../shared/presentation';
+import { Router } from '@angular/router';
+import { YourFeatureOverviewPresentationComponent } from './your-feature-overview-presentation.component';
+import { YourEntityFacade } from '../../../core/facades/your-entity.facade';
 
 @Component({
-  selector: 'app-events-smart',
+  selector: 'app-your-feature-overview-container',
   standalone: true,
-  imports: [
-    CommonModule, 
-    EventCardWithPurchasePresentation, 
-    FilterBarPresentation,
-    ErrorBannerPresentation,
-    LoadingSpinnerPresentation
-  ],
+  imports: [CommonModule, YourFeatureOverviewPresentationComponent],
   template: `
-    <!-- Same template as Step 2 -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Header with enhanced stats -->
-      <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">
-          🎫 Browse & Purchase Events
-        </h1>
-        <p class="text-xl text-gray-600 mb-8">
-          Discover amazing events and purchase tickets instantly
-        </p>
-        
-        <!-- Summary Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div class="card p-6 text-center">
-            <div class="text-3xl font-bold text-primary-600 mb-2">
-              {{ eventsFacade.totalEvents() }}
-            </div>
-            <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">
-              Total Events
-            </div>
-          </div>
-          
-          <div class="card p-6 text-center">
-            <div class="text-3xl font-bold text-green-600 mb-2">
-              {{ eventsFacade.activeEvents().length }}
-            </div>
-            <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">
-              Available
-            </div>
-          </div>
-          
-          <div class="card p-6 text-center">
-            <div class="text-3xl font-bold text-purple-600 mb-2">
-              {{ ticketsFacade.ticketsSoldCount() }}
-            </div>
-            <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">
-              Tickets Sold
-            </div>
-          </div>
+    <app-your-feature-overview-presentation
+      [entities]="facade.entities()"
+      [activeEntities]="facade.activeEntities()"
+      [totalEntities]="facade.totalEntities()"
+      [isLoading]="facade.isLoading()"
+      [error]="facade.lastError()"
+      (addEntity)="onAddEntity()"
+      (deleteEntity)="onDeleteEntity($event)"
+      (errorDismiss)="onErrorDismiss()"
+    ></app-your-feature-overview-presentation>
+  `
+})
+export class YourFeatureOverviewContainerComponent {
+  facade = inject(YourEntityFacade);
+  router = inject(Router);
 
-          <div class="card p-6 text-center">
-            <div class="text-3xl font-bold text-secondary-600 mb-2">
-              {{ ticketsFacade.formatPrice(ticketsFacade.totalRevenue()) }}
-            </div>
-            <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">
-              Revenue
-            </div>
-          </div>
+  onAddEntity() {
+    this.router.navigate(['/your-feature/add']);
+  }
+
+  async onDeleteEntity(id: string) {
+    if (confirm('Are you sure you want to delete this item?')) {
+      await this.facade.deleteEntity(id);
+    }
+  }
+
+  onErrorDismiss() {
+    this.facade.clearError();
+  }
+}
+```
+
+#### 5.2 Overview Presentation Component
+```typescript
+// src/app/features/your-feature/overview/your-feature-overview-presentation.component.ts
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { ErrorBannerComponent } from '../../../shared/components/error-banner.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner.component';
+
+@Component({
+  selector: 'app-your-feature-overview-presentation',
+  standalone: true,
+  imports: [CommonModule, RouterModule, LoadingSpinnerComponent, ErrorBannerComponent],
+  template: `
+    <!-- CONSISTENT LAYOUT PATTERN -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <!-- Breadcrumb -->
+      <nav class="text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+        <ol class="list-none p-0 inline-flex">
+          <li class="flex items-center">
+            <span class="font-semibold text-gray-700">Your Feature</span>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Page Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+        <div class="mb-4 sm:mb-0">
+          <h1 class="text-3xl font-bold text-gray-900">Your Feature Overview</h1>
+          <p class="text-gray-600 mt-2">Manage and monitor your feature entities.</p>
         </div>
+        <button class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-md font-semibold transition-colors" 
+                (click)="addEntity.emit()">
+          + Add New Item
+        </button>
       </div>
 
-      <!-- Error Banners -->
-      <app-error-banner-presentation
-        [error]="eventsFacade.lastError()"
-        (dismiss)="eventsFacade.clearError()">
-      </app-error-banner-presentation>
+      <!-- Error Handling -->
+      <app-error-banner 
+        [error]="error" 
+        [dismissible]="true"
+        (dismiss)="errorDismiss.emit()">
+      </app-error-banner>
 
-      <app-error-banner-presentation
-        [error]="ticketsFacade.lastError()"
-        (dismiss)="ticketsFacade.clearError()">
-      </app-error-banner-presentation>
+      <!-- Loading State -->
+      <app-loading-spinner 
+        [isLoading]="isLoading" 
+        message="Loading entities...">
+      </app-loading-spinner>
 
-      <!-- Loading Spinner -->
-      <app-loading-spinner-presentation
-        [isLoading]="eventsFacade.isLoading() || ticketsFacade.isLoading()"
-        message="Loading events..."
-        containerClass="py-12">
-      </app-loading-spinner-presentation>
+      <!-- Content -->
+      @if (!isLoading) {
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div class="bg-white rounded-lg shadow-sm p-6 text-center">
+            <div class="text-3xl font-bold text-green-600">{{activeEntities}}</div>
+            <div class="text-sm text-gray-500 mt-2">Active Items</div>
+          </div>
+          <div class="bg-white rounded-lg shadow-sm p-6 text-center">
+            <div class="text-3xl font-bold text-gray-800">{{totalEntities}}</div>
+            <div class="text-sm text-gray-500 mt-2">Total Items</div>
+          </div>
+          <!-- Add more stats as needed -->
+        </div>
 
-      <!-- Filters -->
-      <app-filter-bar-presentation
-        [filters]="currentFilters()"
-        [showResultsCount]="true"
-        [resultsCount]="eventsFacade.filteredEvents().length"
-        (categoryFilterChange)="onCategoryFilterChange($event)"
-        (statusFilterChange)="onStatusFilterChange($event)"
-        (refresh)="onRefreshEvents()">
-      </app-filter-bar-presentation>
-
-      <!-- Events Grid -->
-      @if (!eventsFacade.isLoading()) {
-        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-          @for (event of eventsFacade.filteredEvents(); track event.id) {
-            <app-event-card-with-purchase
-              [event]="event"
-              [formData]="getPurchaseFormData(event.id)"
-              [isFormValid]="isPurchaseFormValid(event.id)"
-              [isLoading]="isProcessingPurchase()"
-              (formChange)="onPurchaseFormChange(event.id, $event)"
-              (purchase)="onPurchaseTickets($event)">
-            </app-event-card-with-purchase>
-          } @empty {
-            <div class="col-span-full">
-              <div class="text-center py-16">
-                <div class="text-6xl mb-4">🔍</div>
-                <h3 class="text-2xl font-semibold text-gray-900 mb-2">No events found</h3>
-                <p class="text-gray-600 mb-6">
-                  Try adjusting your filters or check back later for new events.
-                </p>
-                <button 
-                  class="btn-primary"
-                  (click)="onRefreshEvents()">
-                  Refresh Events
-                </button>
-              </div>
-            </div>
-          }
+        <!-- Main Content Table/Grid -->
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              @for (entity of entities; track entity.id) {
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {{entity.name}}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    @if (entity.status === 'active') {
+                      <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                        Active
+                      </span>
+                    }
+                    @if (entity.status === 'inactive') {
+                      <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Inactive
+                      </span>
+                    }
+                    @if (entity.status === 'pending') {
+                      <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                        Pending
+                      </span>
+                    }
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    {{formatDate(entity.createdAt)}}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                    <div class="flex gap-3">
+                      <button class="hover:text-blue-600 transition-colors" title="Edit">
+                        ✏️
+                      </button>
+                      <button class="hover:text-red-600 transition-colors" title="Delete" 
+                              (click)="deleteEntity.emit(entity.id)">
+                        🗑️
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                    <div class="text-4xl mb-4">📋</div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No items found</h3>
+                    <p class="text-gray-600 mb-6">Get started by adding your first item.</p>
+                    <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
+                            (click)="addEntity.emit()">
+                      Add New Item
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
       }
     </div>
   `
 })
-export class EventsSmartComponent {
-  // Simple facade injection - no tokens needed!
-  eventsFacade = inject(EventsFacade);
-  ticketsFacade = inject(TicketsFacade);
-  notificationService = inject(NotificationService);
+export class YourFeatureOverviewPresentationComponent {
+  @Input() entities!: any[];
+  @Input() activeEntities!: number;
+  @Input() totalEntities!: number;
+  @Input() isLoading = false;
+  @Input() error: string | null = null;
   
-  // Same implementation as Step 2...
-  private purchaseForms = new Map<string, {
-    customerName: ReturnType<typeof signal<string>>;
-    customerEmail: ReturnType<typeof signal<string>>;
-    quantity: ReturnType<typeof signal<number>>;
-  }>();
+  @Output() addEntity = new EventEmitter<void>();
+  @Output() deleteEntity = new EventEmitter<string>();
+  @Output() errorDismiss = new EventEmitter<void>();
 
-  private processingPurchase = signal(false);
-
-  currentFilters = computed((): FilterState => ({
-    categoryFilter: this.eventsFacade.categoryFilter(),
-    statusFilter: this.eventsFacade.statusFilter()
-  }));
-
-  // All the same methods as Step 2...
-  getPurchaseFormData(eventId: string): PurchaseFormData {
-    if (!this.purchaseForms.has(eventId)) {
-      this.purchaseForms.set(eventId, {
-        customerName: signal(''),
-        customerEmail: signal(''),
-        quantity: signal(1)
-      });
-    }
-    
-    const form = this.purchaseForms.get(eventId)!;
-    return {
-      customerName: form.customerName(),
-      customerEmail: form.customerEmail(),
-      quantity: form.quantity()
-    };
-  }
-
-  onPurchaseFormChange(eventId: string, change: { field: string; value: any }) {
-    const form = this.purchaseForms.get(eventId);
-    if (!form) return;
-
-    switch (change.field) {
-      case 'customerName':
-        form.customerName.set(change.value);
-        break;
-      case 'customerEmail':
-        form.customerEmail.set(change.value);
-        break;
-      case 'quantity':
-        form.quantity.set(change.value);
-        break;
-    }
-  }
-
-  isPurchaseFormValid(eventId: string): boolean {
-    const formData = this.getPurchaseFormData(eventId);
-    const event = this.eventsFacade.events().find(e => e.id === eventId);
-    
-    if (!event) return false;
-    
-    return (
-      formData.customerName.trim() !== '' &&
-      formData.customerEmail.trim() !== '' &&
-      formData.customerEmail.includes('@') &&
-      formData.quantity > 0 &&
-      formData.quantity <= 10 &&
-      event.status === 'active' &&
-      event.availableTickets >= formData.quantity &&
-      !this.processingPurchase()
-    );
-  }
-
-  isProcessingPurchase(): boolean {
-    return this.processingPurchase();
-  }
-
-  async onPurchaseTickets(request: PurchaseRequest) {
-    this.processingPurchase.set(true);
-    
+  formatDate(dateString: string): string {
     try {
-      const result = await this.ticketsFacade.purchaseTickets(request);
-      
-      if (result.success) {
-        const form = this.purchaseForms.get(request.eventId);
-        if (form) {
-          form.customerName.set('');
-          form.customerEmail.set('');
-          form.quantity.set(1);
-        }
-        
-        this.notificationService.showSuccess(
-          `🎉 Successfully purchased ${request.quantity} ticket${request.quantity > 1 ? 's' : ''}!`
-        );
-        
-        this.eventsFacade.loadEvents();
-      }
-    } finally {
-      this.processingPurchase.set(false);
+      return new Date(dateString).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    } catch {
+      return dateString;
     }
   }
+}
+```
 
-  onCategoryFilterChange(category: string) {
-    this.eventsFacade.setCategoryFilter(category as any);
+### Step 6: Add Routes
+
+#### 6.1 Update App Routes
+```typescript
+// src/app/app.routes.ts
+import { Routes } from '@angular/router';
+import { LayoutComponent } from './layout.component';
+import { DataSourcesOverviewContainerComponent } from './features/data-sources/overview/data-sources-overview-container.component';
+import { AddDataSourceContainerComponent } from './features/data-sources/add/add-data-source-container.component';
+// ADD NEW IMPORTS
+import { YourFeatureOverviewContainerComponent } from './features/your-feature/overview/your-feature-overview-container.component';
+
+export const routes: Routes = [
+  {
+    path: '',
+    component: LayoutComponent,
+    children: [
+      { path: '', redirectTo: 'data-sources', pathMatch: 'full' },
+      { path: 'data-sources', component: DataSourcesOverviewContainerComponent },
+      { path: 'data-sources/add', component: AddDataSourceContainerComponent },
+      
+      // ADD NEW ROUTES
+      { path: 'your-feature', component: YourFeatureOverviewContainerComponent },
+      // { path: 'your-feature/add', component: YourFeatureAddContainerComponent },
+      // { path: 'your-feature/:id/edit', component: YourFeatureEditContainerComponent },
+    ]
   }
+];
+```
 
-  onStatusFilterChange(status: string) {
-    this.eventsFacade.setStatusFilter(status as any);
-  }
+#### 6.2 Update Navigation
+```typescript
+// src/app/layout.component.ts - Add navigation link
+<a routerLink="/your-feature" 
+   class="text-gray-700 font-medium hover:text-red-600 transition-colors"
+   routerLinkActive="text-red-600 font-semibold">
+  Your Feature
+</a>
+```
 
-  onRefreshEvents() {
-    this.eventsFacade.loadEvents();
-    this.ticketsFacade.loadTickets();
+## 🎨 **Design Standards**
+
+### Layout Consistency
+```typescript
+// ALWAYS use this container pattern:
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <!-- Breadcrumb -->
+  <!-- Page Header -->
+  <!-- Error Handling -->
+  <!-- Loading State -->
+  <!-- Content -->
+</div>
+```
+
+### Component Naming
+- **Container**: `[feature-name]-[page-type]-container.component.ts`
+- **Presentation**: `[feature-name]-[page-type]-presentation.component.ts`
+- **Facade**: `[feature-name].facade.ts`
+- **Model**: `[feature-name].model.ts`
+
+### Color Scheme
+- **Primary Red**: `bg-red-600 hover:bg-red-700`
+- **Success Green**: `bg-green-100 text-green-800`
+- **Warning Yellow**: `bg-yellow-100 text-yellow-800`
+- **Error Red**: `bg-red-100 text-red-800`
+- **Neutral Gray**: `bg-gray-100 text-gray-800`
+
+## ✅ **Checklist for New Features**
+
+### Before Starting
+- [ ] Requirements clearly defined
+- [ ] Data models designed
+- [ ] API endpoints planned
+- [ ] UI mockups/wireframes ready
+
+### Implementation
+- [ ] Models created with proper TypeScript interfaces
+- [ ] API functions implemented
+- [ ] Use cases created following functional pattern
+- [ ] Facade implemented with signals and computed values
+- [ ] Container component created
+- [ ] Presentation component created with proper responsive design
+- [ ] Routes added to app.routes.ts
+- [ ] Navigation updated in layout.component.ts
+
+### Testing & Quality
+- [ ] All components follow consistent naming conventions
+- [ ] Error handling implemented throughout
+- [ ] Loading states implemented
+- [ ] Responsive design tested
+- [ ] Accessibility considerations met
+- [ ] TypeScript strict mode compliance
+
+### Documentation
+- [ ] API endpoints documented
+- [ ] Component interfaces documented
+- [ ] Any business logic explained
+
+## 🔧 **Common Patterns**
+
+### Error Handling Pattern
+```typescript
+try {
+  const result = await this.useCase(data);
+  this._cachedData.set(result);
+  this._cachedError.set(null);
+  return { success: true };
+} catch (error) {
+  const message = error instanceof Error ? error.message : 'Operation failed';
+  this._cachedError.set(message);
+  return { success: false, error: message };
+} finally {
+  this.isLoading.set(false);
+}
+```
+
+### Loading State Pattern
+```typescript
+// In facade
+readonly isLoading = signal(false);
+
+// In template
+<app-loading-spinner 
+  [isLoading]="facade.isLoading()" 
+  message="Loading...">
+</app-loading-spinner>
+```
+
+### Responsive Grid Pattern
+```typescript
+<!-- Stats/Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+<!-- Form Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row gap-4">
+```
+
+## 🚫 **What NOT to Do**
+
+### Avoid These Patterns
+- ❌ Direct HTTP calls in components
+- ❌ Business logic in presentation components
+- ❌ Hardcoded data or configuration
+- ❌ Using `any` type in TypeScript
+- ❌ Missing error handling
+- ❌ Inconsistent naming conventions
+- ❌ Mixing container and presentation concerns
+- ❌ Creating components without proper responsive design
+- ❌ Using outdated Angular patterns (NgModules, etc.)
+
+### Anti-Patterns
+```typescript
+// ❌ DON'T DO THIS
+export class BadComponent {
+  constructor(private http: HttpClient) {}
+  
+  async loadData() {
+    const data = await this.http.get<any>('/api/data').toPromise();
+    // Direct HTTP + any type + no error handling
   }
 }
 
-// ========================
-// BENEFITS OF THIS APPROACH
-// ========================
-
-/*
-✅ NO DEPENDENCY INJECTION TOKENS NEEDED
-✅ NO COMPLEX DI CONFIGURATION
-✅ PURE FUNCTIONAL COMPOSITION
-✅ EASIER TO TEST (just call functions)
-✅ SIMPLER ARCHITECTURE
-✅ LESS BOILERPLATE CODE
-✅ BETTER PERFORMANCE (no DI overhead)
-✅ MORE PREDICTABLE (pure functions)
-✅ EASIER TO UNDERSTAND
-✅ BETTER TREE-SHAKING
-
-COMPARISON:
-
-OLD WAY (with DI tokens):
-- Create dependency interfaces
-- Create injection tokens  
-- Configure providers in app.config
-- Inject tokens in constructors
-- Complex testing setup with mocked providers
-
-NEW WAY (functional):
-- Create pure function factories
-- Use case factories return configured functions
-- Facades directly use the function factories
-- Simple testing - just call functions with test data
-- No provider configuration needed
-
-TESTING BECOMES SUPER SIMPLE:
-```typescript
-// Old way - complex DI mocking
-const mockDeps = { LoadEvents: jest.fn(), ... };
-TestBed.configureTestingModule({
-  providers: [{ provide: EVENT_DEPS, useValue: mockDeps }]
-});
-
-// New way - direct function testing
-const listEvents = createListEventsUseCase();
-const result = await listEvents();
+// ✅ DO THIS INSTEAD
+export class GoodComponent {
+  facade = inject(YourEntityFacade);
+  
+  ngOnInit() {
+    this.facade.loadEntities(); // Facade handles everything
+  }
+}
 ```
 
-This is much cleaner and follows functional programming principles better!
-*/
+## 📚 **Additional Resources**
+
+### Reference Files
+- Look at existing `data-sources` implementation as reference
+- Follow patterns in `DataSourcesFacade` for state management
+- Use `ErrorBannerComponent` and `LoadingSpinnerComponent` consistently
+
+### Key Files to Study
+- `src/app/core/facades/data-sources.facade.ts`
+- `src/app/features/data-sources/overview/`
+- `src/app/shared/components/`
+
+This guide ensures consistency across the application and helps maintain high code quality while scaling the project.
