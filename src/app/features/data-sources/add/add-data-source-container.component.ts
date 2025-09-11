@@ -34,15 +34,15 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
         </ol>
       </nav>
 
-      <!-- Page Header -->
-      <div class="text-center mb-8">
+      <!-- Page Header - SINGLE HEADER ONLY -->
+      <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">Add New Data Source</h1>
         <p class="text-gray-600">Connect to your database to start importing data.</p>
       </div>
 
       <!-- Progress Indicator -->
-      <div class="max-w-2xl mx-auto mb-8">
-        <div class="flex items-center justify-between mb-2">
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-4">
           <div class="text-sm font-medium text-gray-700">Step {{step()}} of 3</div>
           <div class="text-sm text-gray-500">{{currentStepLabel()}}</div>
         </div>
@@ -54,7 +54,7 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
       </div>
 
       <!-- Error Handling -->
-      <div class="max-w-2xl mx-auto mb-6">
+      <div class="mb-6">
         <app-error-banner 
           [error]="dataSourcesFacade.lastError()" 
           [dismissible]="true"
@@ -74,8 +74,8 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
         message="Saving data source...">
       </app-loading-spinner>
 
-      <!-- Step Content -->
-      <div class="max-w-2xl mx-auto">
+      <!-- Step Content - CONSISTENT WIDTH -->
+      <div class="max-w-4xl mx-auto">
         @if (step() === 1) {
           <app-add-data-source-step1
             [dbType]="dbType()"
@@ -124,6 +124,7 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
   `
 })
 export class AddDataSourceContainerComponent {
+
   step = signal(1);
   dbType = signal('Oracle');
   host = signal('');
@@ -157,8 +158,6 @@ export class AddDataSourceContainerComponent {
   progress = computed(() => {
     return this.step() === 1 ? 33 : this.step() === 2 ? 66 : 100;
   });
-
-  constructor() {}
 
   onTestConnection(valid: boolean) {
     this.success.set(valid);
@@ -215,4 +214,5 @@ export class AddDataSourceContainerComponent {
       this.step.set(this.step() - 1);
     }
   }
+
 }

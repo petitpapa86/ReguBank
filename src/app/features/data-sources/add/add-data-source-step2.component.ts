@@ -1,7 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AddDataSourceStepperComponent } from './add-data-source-stepper.component';
 
 // src/app/features/data-sources/add/add-data-source-step2.component.ts
 @Component({

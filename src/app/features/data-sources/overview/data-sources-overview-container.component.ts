@@ -1,10 +1,10 @@
+// src/app/features/data-sources/overview/data-sources-overview-container.component.ts - UPDATED
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataSourcesOverviewPresentationComponent } from './data-sources-overview-presentation.component';
 import { DataSourcesFacade } from '../../../core/facades/data-sources.facade';
 import { Router } from '@angular/router';
 
-// src/app/features/data-sources/overview/data-sources-overview-container.component.ts
 @Component({
   selector: 'app-data-sources-overview-container',
   standalone: true,
@@ -20,6 +20,8 @@ import { Router } from '@angular/router';
       [error]="facade.lastError()"
       (addSource)="onAddSource()"
       (deleteSource)="onDeleteSource($event)"
+      (refreshSource)="onRefreshSource($event)"
+      (refreshSources)="onRefreshSources()"
       (errorDismiss)="onErrorDismiss()"
     ></app-data-sources-overview-presentation>
   `
@@ -43,6 +45,16 @@ export class DataSourcesOverviewContainerComponent {
     if (confirm('Are you sure you want to delete this data source?')) {
       await this.facade.deleteDataSource(id);
     }
+  }
+
+  onRefreshSource(id: string) {
+    // Individual source refresh logic here
+    console.log('Refreshing source:', id);
+    // Could trigger individual source sync
+  }
+
+  onRefreshSources() {
+    this.facade.loadDataSources();
   }
 
   onErrorDismiss() {
