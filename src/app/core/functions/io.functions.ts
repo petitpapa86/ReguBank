@@ -29,5 +29,15 @@ export const ioFunctions = {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     return response.json();
+  },
+
+  httpDelete: (url: string) => async () => {
+    const response = await fetch(url, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    return response.json();
   }
 };

@@ -1,5 +1,22 @@
 {
   "dataSources": [
+     {
+      "id": "1",
+      "system": "Core Banking",
+      "status": "connected",
+      "host": "core.bankingsystem.com",
+      "port": "1521",
+      "database": "COREDB",
+      "username": "core_user",
+      "lastSync": "2024-01-20T14:30:00Z",
+      "dbType": "Oracle",
+      "selectedTable": "transactions",
+      "selectedFields": ["id", "amount", "date", "customer_id"],
+      "syncFrequency": "Hourly",
+      "transformationRules": "map customer_id to customerId",
+      "createdAt": "2024-01-15T10:00:00Z",
+      "updatedAt": "2024-01-20T14:30:00Z"
+    },
     {
       "id": "1",
       "system": "Core Banking",

@@ -1,9 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AddDataSourceStep1Component } from './add-data-source-step1.component';
 import { AddDataSourceStep2Component } from './add-data-source-step2.component';
 import { AddDataSourceStep3Component } from './add-data-source-step3.component';
+import { DataSourcesFacade } from '../../../core/facades/data-sources.facade';
+import { CreateDataSourceRequest } from '../../../core/models/data-source.model';
 
 @Component({
   selector: 'app-add-data-source-container',
@@ -74,7 +76,10 @@ export class AddDataSourceContainerComponent {
   syncFrequency = signal('Hourly');
   transformationRules = signal('');
 
-  constructor(private router: Router) {}
+  dataSourcesFacade = inject(DataSourcesFacade);
+  router = inject(Router);
+
+  constructor() {}
 
   onTestConnection(valid: boolean) {
     this.success.set(valid);
@@ -103,9 +108,27 @@ export class AddDataSourceContainerComponent {
     this.step.set(3);
   }
 
-  onPublish() {
-    // Backend integration here
-    this.router.navigate(['/']);
+  async onPublish() {
+    const dataSourceData: CreateDataSourceRequest = {
+      system: this.dbType(),
+      dbType: this.dbType(),
+      host: this.host(),
+      port: this.port(),
+      database: this.database(),
+      username: this.username(),
+      password: this.password(),
+      selectedTable: this.selectedTable(),
+      selectedFields: this.selectedFields(),
+      syncFrequency: this.syncFrequency(),
+      transformationRules: this.transformationRules()
+    };
+
+    const result = await this.dataSourcesFacade.addDataSource(dataSourceData);
+    
+    if (result.success) {
+      this.router.navigate(['/data-sources']);
+    }
+    // Error handling is done by the facade
   }
 
   prevStep() {
