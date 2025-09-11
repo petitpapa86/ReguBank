@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataSourcesOverviewPresentationComponent } from './data-sources-overview-presentation.component';
 import { DataSourcesFacade } from '../../../core/facades/data-sources.facade';
 import { Router } from '@angular/router';
 
+// src/app/features/data-sources/overview/data-sources-overview-container.component.ts
 @Component({
   selector: 'app-data-sources-overview-container',
   standalone: true,
@@ -13,22 +14,38 @@ import { Router } from '@angular/router';
       [connectedSources]="facade.connectedSources()"
       [sourcesWithIssues]="facade.sourcesWithIssues()"
       [totalSources]="facade.totalSources()"
-      [dataSyncSuccess]="dataSyncSuccess"
+      [dataSyncSuccess]="dataSyncSuccess()"
       [dataSources]="facade.dataSources()"
+      [isLoading]="facade.isLoading()"
+      [error]="facade.lastError()"
       (addSource)="onAddSource()"
+      (deleteSource)="onDeleteSource($event)"
+      (errorDismiss)="onErrorDismiss()"
     ></app-data-sources-overview-presentation>
   `
 })
 export class DataSourcesOverviewContainerComponent {
   facade = inject(DataSourcesFacade);
   router = inject(Router);
-  dataSyncSuccess = 92; // TODO: Calculate based on real data if needed
-
-  constructor() {
-    this.facade.loadDataSources();
-  }
+  
+  // Calculate based on connected vs total sources
+  dataSyncSuccess = computed(() => {
+    const total = this.facade.totalSources();
+    const connected = this.facade.connectedSources();
+    return total > 0 ? Math.round((connected / total) * 100) : 0;
+  });
 
   onAddSource() {
     this.router.navigate(['/data-sources/add']);
+  }
+
+  async onDeleteSource(id: string) {
+    if (confirm('Are you sure you want to delete this data source?')) {
+      await this.facade.deleteDataSource(id);
+    }
+  }
+
+  onErrorDismiss() {
+    this.facade.clearError();
   }
 }

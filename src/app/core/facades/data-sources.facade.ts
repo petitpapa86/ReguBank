@@ -7,12 +7,14 @@ import {
   createDeleteDataSourceUseCase
 } from '../use-cases/data-sources-crud.usecase';
 
+// src/app/core/facades/data-sources.facade.ts
 @Injectable({ providedIn: 'root' })
 export class DataSourcesFacade {
-  listDataSourcesUseCase = createListDataSourcesUseCase();
-  createDataSourceUseCase = createCreateDataSourceUseCase();
-  updateDataSourceUseCase = createUpdateDataSourceUseCase();
-  deleteDataSourceUseCase = createDeleteDataSourceUseCase();
+  private readonly listDataSourcesUseCase = createListDataSourcesUseCase();
+  private readonly createDataSourceUseCase = createCreateDataSourceUseCase();
+  private readonly updateDataSourceUseCase = createUpdateDataSourceUseCase();
+  private readonly deleteDataSourceUseCase = createDeleteDataSourceUseCase();
+  
   private readonly _dataVersion = signal(0);
   private readonly _cachedDataSources = signal<DataSource[]>([]);
   private readonly _cachedError = signal<string | null>(null);
@@ -21,7 +23,7 @@ export class DataSourcesFacade {
 
   // Computed properties
   readonly dataSources = computed(() => {
-    this._dataVersion();
+    this._dataVersion(); // Subscribe to changes
     return this._cachedDataSources();
   });
 
@@ -35,47 +37,60 @@ export class DataSourcesFacade {
 
   readonly totalSources = computed(() => this.dataSources().length);
 
-  // Add proper error handling and loading states
+  readonly disconnectedSources = computed(() => 
+    this.dataSources().filter(ds => ds.status === 'disconnected').length
+  );
+
+  // Effect handles async operations
   private _loadEffect = effect(async () => {
-    if (this._dataVersion() > 0) {
-      this.isLoading.set(true);
-      try {
-        const result = await this.listDataSourcesUseCase();
-        this._cachedDataSources.set(result);
-        this._cachedError.set(null);
-      } catch (error) {
-        this._cachedError.set(error instanceof Error ? error.message : 'Failed to load data sources');
-      } finally {
-        this.isLoading.set(false);
-      }
+    const version = this._dataVersion();
+    if (version > 0) {
+      await this._performLoad();
     }
   });
 
-  // Public methods
-  async addDataSource(dataSource: CreateDataSourceRequest) {
+  // Effect to sync cached error to public error
+  private _errorEffect = effect(() => {
+    const error = this._cachedError();
+    this.lastError.set(error);
+  });
+
+  constructor() {
+    // Initialize data loading
+    this.loadDataSources();
+  }
+
+  private async _performLoad() {
     this.isLoading.set(true);
     try {
-      await this.createDataSourceUseCase(dataSource);
-      await this.loadDataSources();
-      return { success: true };
+      const result = await this.listDataSourcesUseCase();
+      this._cachedDataSources.set(result);
+      this._cachedError.set(null);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to create data source';
-      this.lastError.set(message);
-      return { success: false, error: message };
+      const message = error instanceof Error ? error.message : 'Failed to load data sources';
+      this._cachedError.set(message);
     } finally {
       this.isLoading.set(false);
     }
   }
 
-  async updateDataSource(id: string, dataSource: DataSource) {
+  // Public methods
+  loadDataSources() {
+    this._dataVersion.update(v => v + 1);
+  }
+
+  async addDataSource(dataSource: CreateDataSourceRequest) {
     this.isLoading.set(true);
+    this._cachedError.set(null);
+    
     try {
-      await this.updateDataSourceUseCase(id, dataSource);
-      await this.loadDataSources();
+      await this.createDataSourceUseCase(dataSource);
+      // Refresh data after successful creation
+      this.loadDataSources();
       return { success: true };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to update data source';
-      this.lastError.set(message);
+      const message = error instanceof Error ? error.message : 'Failed to create data source';
+      this._cachedError.set(message);
       return { success: false, error: message };
     } finally {
       this.isLoading.set(false);
@@ -86,27 +101,19 @@ export class DataSourcesFacade {
     this.isLoading.set(true);
     try {
       await this.deleteDataSourceUseCase(id);
-      await this.loadDataSources();
+      this.loadDataSources();
       return { success: true };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to delete data source';
-      this.lastError.set(message);
+      this._cachedError.set(message);
       return { success: false, error: message };
     } finally {
       this.isLoading.set(false);
     }
   }
 
-  async loadDataSources() {
-    this.isLoading.set(true);
-    try {
-      const result = await this.listDataSourcesUseCase();
-      this._cachedDataSources.set(result);
-      this._cachedError.set(null);
-    } catch (error) {
-      this._cachedError.set(error instanceof Error ? error.message : 'Failed to load data sources');
-    } finally {
-      this.isLoading.set(false);
-    }
+  clearError() {
+    this._cachedError.set(null);
+    this.lastError.set(null);
   }
 }
