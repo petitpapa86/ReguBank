@@ -1,0 +1,187 @@
+<div *ngIf="isLoading" class="flex justify-center items-center py-8">
+  <div class="text-gray-500">Caricamento...</div>
+</div>
+<div *ngIf="error" class="bg-red-100 text-red-700 p-4 rounded mb-4">
+  {{ error }}
+</div>
+<div *ngIf="!isLoading && !error">
+  <!-- Main Content from file-management.component.html, but use [files] input for table rows -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header Section -->
+    <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-8">
+      <div class="mb-4 lg:mb-0">
+        <h1 class="text-3xl font-bold text-gray-900">Gestione File</h1>
+        <p class="text-gray-600 mt-2">Monitoraggio e gestione dei file caricati per l'analisi BCBS 239</p>
+      </div>
+      <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+        <button class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg flex items-center justify-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+          </svg>
+          Carica Nuovo File
+        </button>
+        <button class="bg-white text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm flex items-center justify-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          Esporta Lista
+        </button>
+      </div>
+    </div>
+    <!-- Stats Cards (static for now) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-sm p-6 border hover-lift">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm font-medium">File Totali</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">{{ totalFiles }}</p>
+          </div>
+          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-6 border hover-lift">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm font-medium">Completati</p>
+            <p class="text-3xl font-bold text-green-600 mt-2">{{ completedFiles }}</p>
+          </div>
+          <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-6 border hover-lift">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm font-medium">In Elaborazione</p>
+            <p class="text-3xl font-bold text-blue-600 mt-2">{{ inProgressFiles }}</p>
+          </div>
+          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-6 border hover-lift">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm font-medium">Con Errori</p>
+            <p class="text-3xl font-bold text-red-600 mt-2">{{ errorFiles }}</p>
+          </div>
+          <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Filters -->
+    <div class="bg-white rounded-xl shadow-sm border p-6 mb-8">
+      <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+  <select class="border rounded-lg px-4 py-2" [value]="statusFilter" (change)="onStatusFilterChange($event)">
+          <option value="Tutti">Tutti</option>
+          <option value="Completati">Completati</option>
+          <option value="In Elaborazione">In Elaborazione</option>
+          <option value="Con Errori">Con Errori</option>
+        </select>
+  <select class="border rounded-lg px-4 py-2" [value]="periodFilter" (change)="onPeriodFilterChange($event)">
+          <option value="Ultimo mese">Ultimo mese</option>
+          <option value="Ultimi 3 mesi">Ultimi 3 mesi</option>
+          <option value="Ultimo anno">Ultimo anno</option>
+        </select>
+  <select class="border rounded-lg px-4 py-2" [value]="typeFilter" (change)="onTypeFilterChange($event)">
+          <option value="Tutti i formati">Tutti i formati</option>
+          <option value="Excel (.xlsx)">Excel (.xlsx)</option>
+          <option value="CSV (.csv)">CSV (.csv)</option>
+        </select>
+        <input class="border rounded-lg px-4 py-2" type="text" [value]="searchFilter" (input)="searchFilterChange.emit($event.target.value)" placeholder="Cerca file..." />
+      </div>
+    </div>
+    <!-- Files Table -->
+    <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left py-4 px-6 font-semibold text-gray-700">Nome File</th>
+              <th class="text-left py-4 px-6 font-semibold text-gray-700">Data Caricamento</th>
+              <th class="text-left py-4 px-6 font-semibold text-gray-700">Record</th>
+              <th class="text-left py-4 px-6 font-semibold text-gray-700">Stato</th>
+              <th class="text-left py-4 px-6 font-semibold text-gray-700">Qualità</th>
+              <th class="text-left py-4 px-6 font-semibold text-gray-700">Conformità</th>
+              <th class="text-left py-4 px-6 font-semibold text-gray-700">Violazioni</th>
+              <th class="text-left py-4 px-6 font-semibold text-gray-700">Azioni</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let file of files" class="hover:bg-gray-50 transition-colors">
+              <td class="py-4 px-6">
+                <div class="flex items-center">
+                  <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                    <!-- SVG icon -->
+                  </div>
+                  <div>
+                    <div class="font-medium text-gray-900">{{ file.name }}</div>
+                    <div class="text-sm text-gray-500">{{ file.size }} • BCBS 239</div>
+                  </div>
+                </div>
+              </td>
+              <td class="py-4 px-6">
+                <div class="text-sm text-gray-900">{{ file.date }}</div>
+                <div class="text-xs text-gray-500">{{ file.time }}</div>
+              </td>
+              <td class="py-4 px-6">
+                <div class="text-sm font-mono text-gray-900">{{ file.records }}</div>
+                <div class="text-xs text-gray-500">record</div>
+              </td>
+              <td class="py-4 px-6">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  {{ file.status }}
+                </span>
+              </td>
+              <td class="py-4 px-6">
+                <div class="flex items-center space-x-2">
+                  <div class="w-16 bg-gray-200 rounded-full h-2">
+                    <div class="bg-yellow-500 h-2 rounded-full" [style.width]="file.quality + '%'" *ngIf="file.quality"></div>
+                  </div>
+                  <span class="text-sm font-medium text-gray-900">{{ file.quality }}%</span>
+                </div>
+              </td>
+              <td class="py-4 px-6">
+                <div class="flex items-center space-x-2">
+                  <div class="w-16 bg-gray-200 rounded-full h-2">
+                    <div class="bg-yellow-500 h-2 rounded-full" [style.width]="file.compliance + '%'" *ngIf="file.compliance"></div>
+                  </div>
+                  <span class="text-sm font-medium text-gray-900">{{ file.compliance }}%</span>
+                </div>
+              </td>
+              <td class="py-4 px-6">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  {{ file.violations }}
+                </span>
+              </td>
+              <td class="py-4 px-6">
+                <div class="flex space-x-2">
+                  <button class="text-primary hover:text-blue-700 text-sm font-medium">Visualizza</button>
+                  <button class="text-green-600 hover:text-green-700 text-sm font-medium">Report</button>
+                  <button class="text-gray-500 hover:text-gray-700 text-sm font-medium">
+                    <!-- SVG icon -->
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

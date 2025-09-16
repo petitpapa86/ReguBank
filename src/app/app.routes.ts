@@ -18,7 +18,7 @@ export const routes: Routes = [
 		children: [
 			{ path: 'dashboard', component: DashboardContainerComponent },
 			{ path: 'report', component: ReportContainerComponent },
-			{ path: 'file-processing', loadComponent: () => import('./features/file-processing/file-processing.component').then(m => m.FileProcessingComponent) },
+			{ path: 'file-processing', loadComponent: () => import('./features/file-management/overview/file-management-overview-container.component').then(m => m.FileManagementOverviewContainerComponent) },
 			{ path: 'risultati-analisi', component: RisultatiAnalisiComponent },
 			{ path: 'configurazione', loadComponent: () => import('./features/configurazione/container/configurazione-container.component').then(m => m.ConfigurazioneContainerComponent) },
 		]
