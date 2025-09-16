@@ -52,8 +52,9 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'Lato', 'Open Sans', 'ui-sans-serif', 'system-ui'],
-        heading: ['Lato', 'Inter', 'ui-sans-serif', 'system-ui'],
+        // Airbnb's Cereal font, with fallbacks
+        sans: ['Cereal', 'Inter', 'Lato', 'Open Sans', 'ui-sans-serif', 'system-ui'],
+        heading: ['Cereal', 'Lato', 'Inter', 'ui-sans-serif', 'system-ui'],
         mono: ['Fira Mono', 'Menlo', 'monospace'],
       },
       maxWidth: {
