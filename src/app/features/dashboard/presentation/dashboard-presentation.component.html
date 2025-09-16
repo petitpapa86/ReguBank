@@ -154,7 +154,7 @@
         <div class="ml-3">
           <p class="text-sm text-yellow-700">
             <span class="font-medium">Attenzione:</span> Rilevate 3 violazioni critiche nel file più recente.
-            <a href="#" class="font-medium underline text-yellow-700 hover:text-yellow-800">Visualizza dettagli →</a>
+            <a [routerLink]="'/risultati-analisi'" class="font-medium underline text-yellow-700 hover:text-yellow-800">Visualizza dettagli →</a>
           </p>
         </div>
       </div>
@@ -214,8 +214,8 @@
               </span>
             </td>
             <td class="py-4 px-6">
-              <button class="text-primary hover:text-blue-700 font-medium text-sm hover:underline">
-                Visualizza
+              <button [routerLink]="'/risultati-analisi'" class="text-primary hover:text-blue-700 font-medium text-sm hover:underline">
+                Visualizza dettagli
               </button>
             </td>
           </tr>
@@ -369,7 +369,7 @@
               </div>
             </div>
           </button>
-          <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-colors group">
+          <button [routerLink]="'/configurazione'" class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-colors group">
             <div class="flex items-center">
               <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-purple-200">
                 <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

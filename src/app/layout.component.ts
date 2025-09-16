@@ -18,10 +18,10 @@ import { RouterOutlet, RouterModule } from '@angular/router';
           <div class="text-white/80 ml-2 text-sm">| BCBS 239</div>
         </div>
         <div class="hidden md:flex items-center space-x-8">
-          <a href="#" class="text-white/90 hover:text-white text-sm font-medium">Dashboard</a>
-          <a href="#" class="text-white/70 hover:text-white text-sm font-medium">File</a>
+          <a [routerLink]="'/dashboard'" class="text-white/90 hover:text-white text-sm font-medium">Dashboard</a>
+          <a [routerLink]="'/file-processing'" class="text-white/70 hover:text-white text-sm font-medium">File</a>
           <a [routerLink]="'/report'" class="text-white/70 hover:text-white text-sm font-medium">Report</a>
-          <a href="#" class="text-white/70 hover:text-white text-sm font-medium">Configurazione</a>
+          <a [routerLink]="'/configurazione'" class="text-white/90 hover:text-white text-sm font-medium">Configurazione</a>
         </div>
         <div class="flex items-center space-x-4">
           <div class="hidden md:block text-right">

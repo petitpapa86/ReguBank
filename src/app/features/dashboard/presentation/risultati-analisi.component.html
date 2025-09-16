@@ -1,0 +1,202 @@
+
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-16">
+        <span class="text-lg text-gray-500">Caricamento dati analisi...</span>
+    </div>
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded mb-8">
+        <strong>Errore:</strong> {{error}}
+    </div>
+    <!-- Main Content -->
+    <ng-container *ngIf="!isLoading && !error && data">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center space-x-4">
+                <button (click)="goBack()" class="text-primary hover:text-blue-700 font-medium flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Torna alla Dashboard
+                </button>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Risultati Analisi BCBS 239</h1>
+                    <p class="text-gray-600 mt-1">{{data.fileName}} • {{data.totalRecords | number}} record</p>
+                </div>
+            </div>
+            <button (click)="generateReport()" class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                Genera Report PDF
+            </button>
+        </div>
+
+        <!-- Alert -->
+        <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-8 rounded-r-lg">
+            <div class="flex items-center">
+                <svg class="h-5 w-5 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.5 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+                <p class="text-sm text-red-700">
+                    <span class="font-medium">{{data.criticalViolations}} violazioni critiche rilevate</span> - Richiesta azione immediata per conformità BCBS 239
+                </p>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 border">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-yellow-600 mb-2">{{data.complianceScore}}%</div>
+                    <div class="text-sm font-medium text-gray-700">Punteggio Conformità</div>
+                    <div class="text-xs text-gray-500 mt-1">Soglia: 85%</div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-600 mb-2">{{data.dataQuality}}%</div>
+                    <div class="text-sm font-medium text-gray-700">Qualità Dati</div>
+                    <div class="text-xs text-gray-500 mt-1">Completezza</div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-red-600 mb-2">{{data.criticalViolations}}</div>
+                    <div class="text-sm font-medium text-gray-700">Violazioni Critiche</div>
+                    <div class="text-xs text-gray-500 mt-1">Da risolvere</div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">{{data.largeExposures}}</div>
+                    <div class="text-sm font-medium text-gray-700">Grandi Esposizioni</div>
+                    <div class="text-xs text-gray-500 mt-1">Sopra 10%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Violations -->
+        <div class="bg-white rounded-xl shadow-sm mb-8">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Violazioni BCBS 239 Rilevate</h3>
+                <p class="text-gray-600 text-sm mt-1">Problemi di conformità che richiedono attenzione</p>
+            </div>
+            <div class="p-6 space-y-6">
+                <ng-container *ngFor="let v of data.violations">
+                    <div [ngClass]="{
+                        'border-l-4 bg-red-50 border-red-500': v.severity === 'CRITICA',
+                        'border-l-4 bg-orange-50 border-orange-500': v.severity === 'ALTA',
+                        'border-l-4 bg-yellow-50 border-yellow-500': v.severity === 'MEDIA'
+                    }" class="p-4 rounded-r-lg">
+                        <div class="flex justify-between items-start mb-3">
+                            <h4 class="font-semibold" [ngClass]="{
+                                'text-red-800': v.severity === 'CRITICA',
+                                'text-orange-800': v.severity === 'ALTA',
+                                'text-yellow-800': v.severity === 'MEDIA'
+                            }">{{v.title}}</h4>
+                            <span [ngClass]="{
+                                'bg-red-100 text-red-800': v.severity === 'CRITICA',
+                                'bg-orange-100 text-orange-800': v.severity === 'ALTA',
+                                'bg-yellow-100 text-yellow-800': v.severity === 'MEDIA'
+                            }" class="text-xs px-2 py-1 rounded-full font-medium">{{v.severity}}</span>
+                        </div>
+                        <p [ngClass]="{
+                            'text-red-700': v.severity === 'CRITICA',
+                            'text-orange-700': v.severity === 'ALTA',
+                            'text-yellow-700': v.severity === 'MEDIA'
+                        }" class="text-sm mb-3">{{v.description}}</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <ng-container *ngFor="let key of (v.details | keyvalue)">
+                                <div *ngIf="key.value !== ''">
+                                    <span class="text-gray-600">{{key.key}}:</span>
+                                    <div class="font-medium" [ngClass]="{
+                                        'text-red-600': v.severity === 'CRITICA' && key.key === 'Percentuale',
+                                        'text-orange-600': v.severity === 'ALTA',
+                                        'text-yellow-600': v.severity === 'MEDIA'
+                                    }">{{key.value}}</div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+        <!-- Large Exposures Table -->
+        <div class="bg-white rounded-xl shadow-sm mb-8">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Top 5 Grandi Esposizioni</h3>
+                <p class="text-gray-600 text-sm mt-1">Controparti che superano il 10% del capitale</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">Controparte</th>
+                            <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">Esposizione (€)</th>
+                            <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">% Capitale</th>
+                            <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">Stato</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr *ngFor="let e of data.topExposures" class="hover:bg-gray-50">
+                            <td class="py-4 px-6 font-medium text-gray-900">{{e.counterparty}}</td>
+                            <td class="py-4 px-6 font-mono text-sm">{{e.exposure}}</td>
+                            <td class="py-4 px-6 font-semibold" [ngClass]="{'text-red-600': e.status === 'Violazione', 'text-green-600': e.status === 'Conforme'}">{{e.percent}}</td>
+                            <td class="py-4 px-6">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="{'bg-red-100 text-red-800': e.status === 'Violazione', 'bg-green-100 text-green-800': e.status === 'Conforme'}">
+                                    {{e.status}}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recommended Actions -->
+        <div class="bg-white rounded-xl shadow-sm">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Azioni Raccomandate</h3>
+                <p class="text-gray-600 text-sm mt-1">Passi per migliorare la conformità BCBS 239</p>
+            </div>
+            <div class="p-6 space-y-4">
+                <ng-container *ngFor="let a of data.recommendedActions; let i = index">
+                    <div class="flex items-start space-x-4 p-4" [ngClass]="{
+                        'bg-red-50': a.color === 'red',
+                        'bg-orange-50': a.color === 'orange',
+                        'bg-yellow-50': a.color === 'yellow'
+                    }" class="rounded-lg">
+                        <div class="w-8 h-8" [ngClass]="{
+                            'bg-red-100': a.color === 'red',
+                            'bg-orange-100': a.color === 'orange',
+                            'bg-yellow-100': a.color === 'yellow'
+                        }" class="rounded-lg flex items-center justify-center">
+                            <span [ngClass]="{
+                                'text-red-600': a.color === 'red',
+                                'text-orange-600': a.color === 'orange',
+                                'text-yellow-600': a.color === 'yellow'
+                            }" class="font-bold text-sm">{{i+1}}</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-1" [ngClass]="{
+                                'text-red-800': a.color === 'red',
+                                'text-orange-800': a.color === 'orange',
+                                'text-yellow-800': a.color === 'yellow'
+                            }">{{a.title}}</h4>
+                            <p [ngClass]="{
+                                'text-red-700': a.color === 'red',
+                                'text-orange-700': a.color === 'orange',
+                                'text-yellow-700': a.color === 'yellow'
+                            }" class="text-sm">{{a.description}}</p>
+                            <div class="text-xs mt-2" [ngClass]="{
+                                'text-red-600': a.color === 'red',
+                                'text-orange-600': a.color === 'orange',
+                                'text-yellow-600': a.color === 'yellow'
+                            }">Scadenza: {{a.deadline}} • Priorità: {{a.priority}}</div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </ng-container>
+</div>
