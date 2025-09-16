@@ -1,11 +1,12 @@
 // Dashboard Presentation Component
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'dashboard-presentation',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard-presentation.component.html',
   styleUrls: ['./dashboard-presentation.component.css']
 })

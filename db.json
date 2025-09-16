@@ -54,6 +54,20 @@
   },
   "dataSources": []
   ,
+  "fileProcessing": {
+    "fileName": "esposizioni_settembre_2025.xlsx",
+    "fileSize": "15,7 MB",
+    "totalRecords": 125000,
+    "progress": 68,
+    "recordsProcessed": 85000,
+    "timeRemaining": "4m 12s",
+    "currentStep": "Controllo Conformità BCBS 239",
+    "stepDescription": "Verifica grandi esposizioni e limiti normativi",
+    "qualityScore": 94.5,
+    "violationsFound": 3,
+    "largeExposures": 15,
+    "status": "processing"
+  },
   "reports": [
     {
       "id": "1",

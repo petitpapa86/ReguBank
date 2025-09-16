@@ -1,5 +1,6 @@
 import { DashboardData } from '../models/dashboard.model';
 import { Report, CreateReportRequest, UpdateReportRequest } from '../models/report.model';
+import { FileProcessing } from '../models/file-processing.model';
 import { ioFunctions } from './io.functions';
 
 export const apiFunctions = {
@@ -8,4 +9,5 @@ export const apiFunctions = {
   createReport: (data: CreateReportRequest) => ioFunctions.httpPost<Report>('http://localhost:3000/reports', data),
   updateReport: (id: string, data: UpdateReportRequest) => ioFunctions.httpPut<Report>(`http://localhost:3000/reports/${id}`, data),
   deleteReport: (id: string) => ioFunctions.httpDelete(`http://localhost:3000/reports/${id}`),
+  loadFileProcessing: () => ioFunctions.httpGet<FileProcessing>('http://localhost:3000/fileProcessing'),
 };

@@ -12,6 +12,7 @@ export const routes: Routes = [
 		children: [
 			{ path: 'dashboard', component: DashboardContainerComponent },
  			{ path: 'report', component: ReportContainerComponent },
+ 			{ path: 'file-processing', loadComponent: () => import('./features/file-processing/file-processing.component').then(m => m.FileProcessingComponent) },
 		]
 	}
 ];
