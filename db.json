@@ -53,4 +53,43 @@
     ]
   },
   "dataSources": []
+  ,
+  "reports": [
+    {
+      "id": "1",
+      "name": "BCBS_239_Report_Set2025.pdf",
+      "size": "2,4 MB",
+      "pages": 15,
+      "format": "PDF/A-1b",
+      "template": "Banca d'Italia Standard",
+      "language": "Italiano",
+      "status": "Completato",
+      "generatedAt": "15 Set 2025, 14:47",
+      "period": "Settembre 2025"
+    },
+    {
+      "id": "2",
+      "name": "BCBS_239_Report_Ago2025.pdf",
+      "size": "1,8 MB",
+      "pages": 12,
+      "format": "PDF/A-1b",
+      "template": "Banca d'Italia Standard",
+      "language": "Italiano",
+      "status": "Inviato",
+      "generatedAt": "28 Ago 2025, 09:23",
+      "period": "Agosto 2025"
+    },
+    {
+      "id": "3",
+      "name": "BCBS_239_Report_Lug2025.pdf",
+      "size": "2,1 MB",
+      "pages": 14,
+      "format": "PDF/A-1b",
+      "template": "Banca d'Italia Standard",
+      "language": "Italiano",
+      "status": "Archiviato",
+      "generatedAt": "30 Lug 2025, 16:15",
+      "period": "Luglio 2025"
+    }
+  ]
 }

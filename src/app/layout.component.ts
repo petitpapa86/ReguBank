@@ -20,7 +20,7 @@ import { RouterOutlet, RouterModule } from '@angular/router';
         <div class="hidden md:flex items-center space-x-8">
           <a href="#" class="text-white/90 hover:text-white text-sm font-medium">Dashboard</a>
           <a href="#" class="text-white/70 hover:text-white text-sm font-medium">File</a>
-          <a href="#" class="text-white/70 hover:text-white text-sm font-medium">Report</a>
+          <a [routerLink]="'/report'" class="text-white/70 hover:text-white text-sm font-medium">Report</a>
           <a href="#" class="text-white/70 hover:text-white text-sm font-medium">Configurazione</a>
         </div>
         <div class="flex items-center space-x-4">

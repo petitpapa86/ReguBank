@@ -1,0 +1,27 @@
+/* Styles from the original HTML */
+.gradient-bg {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+}
+.report-preview {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+}
+.page-preview {
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: perspective(1000px) rotateY(-5deg);
+  transition: transform 0.3s ease;
+}
+.page-preview:hover {
+  transform: perspective(1000px) rotateY(0deg);
+}
+.progress-circle {
+  animation: rotate 2s linear infinite;
+}
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.banca-italia-seal {
+  background: radial-gradient(circle, #1e40af 0%, #3b82f6 100%);
+}
