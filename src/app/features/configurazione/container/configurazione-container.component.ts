@@ -1,6 +1,8 @@
 import { Component, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfigurazionePresentationComponent } from '../presentation/configurazione-presentation.component';
+import { Utente } from '../../../core/models/utente.model';
+import { UtentiFacade } from '../../../core/facades/utenti.facade';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -10,6 +12,7 @@ import { CommonModule } from '@angular/common';
   template: `
     <app-configurazione-presentation
       [model]="model()"
+      [utenti]="utenti()"
       [notification]="notification()"
       [notificationType]="notificationType()"
       (save)="onSave()"
@@ -26,10 +29,14 @@ export class ConfigurazioneContainerComponent {
     abi: '05584',
     lei: 'IT123456789012345678',
     valuta: 'EUR - Euro',
-    limiteGrandiEsposizioni: 25,
-    sogliaGrandeEsposizione: 10,
-    capitaleAmmissibile: '2.500.000.000',
-    sogliaQualitaDati: 95,
+    bcbs239: {
+      limiteGrandiEsposizioni: 25,
+      sogliaClassificazione: 10,
+      capitaleAmmissibile: 2500000000,
+      metodoCalcolo: 'Standardizzato',
+      sogliaQualitaMinima: 95,
+      validazioneFile: 'automatica' as 'automatica'
+    },
     templateReport: "Banca d'Italia Standard",
     linguaReport: 'Italiano',
     frequenzaGenerazione: 'Mensile',
@@ -38,8 +45,14 @@ export class ConfigurazioneContainerComponent {
     notificaViolazioni: true,
     archiviazioneAutomatica: false
   });
+  utenti = signal<Utente[]>([]);
   notification = signal<string | null>(null);
   notificationType = signal<'success' | 'error' | 'info'>('info');
+
+  constructor(private utentiFacade: UtentiFacade) {
+    this.utentiFacade.loadUtenti();
+    this.utenti = this.utentiFacade.utenti;
+  }
 
   onGoBack() {
     this.router.navigate(['/dashboard']);
@@ -57,10 +70,14 @@ export class ConfigurazioneContainerComponent {
         abi: '05584',
         lei: 'IT123456789012345678',
         valuta: 'EUR - Euro',
-        limiteGrandiEsposizioni: 25,
-        sogliaGrandeEsposizione: 10,
-        capitaleAmmissibile: '2.500.000.000',
-        sogliaQualitaDati: 95,
+        bcbs239: {
+          limiteGrandiEsposizioni: 25,
+          sogliaClassificazione: 10,
+          capitaleAmmissibile: 2500000000,
+          metodoCalcolo: 'Standardizzato',
+          sogliaQualitaMinima: 95,
+          validazioneFile: 'automatica' as 'automatica'
+        },
         templateReport: "Banca d'Italia Standard",
         linguaReport: 'Italiano',
         frequenzaGenerazione: 'Mensile',

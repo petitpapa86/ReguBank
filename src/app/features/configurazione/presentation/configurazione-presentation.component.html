@@ -391,7 +391,50 @@
                 <h2 class="text-xl font-bold text-gray-900 mb-2">Gestione Utenti</h2>
                 <p class="text-gray-600">Controllo accessi e permessi per il sistema ComplianceCore</p>
               </div>
-              <button onclick="showAddUserModal()" class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg flex items-center">
+              <button (click)="openAddUserModal()" class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg flex items-center">
+          <!-- Add User Modal -->
+          <div *ngIf="showAddUserModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-8 relative">
+              <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-gray-900">Aggiungi Nuovo Utente</h3>
+                <button type="button" (click)="hideAddUserModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+              <form class="space-y-4">
+                <div>
+                  <label class="block text-sm font-semibold text-gray-900 mb-2">Nome Completo</label>
+                  <input type="text" [(ngModel)]="newUser.nome" name="nome" placeholder="Mario Rossi" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-900 mb-2">Email</label>
+                  <input type="email" [(ngModel)]="newUser.email" name="email" placeholder="mario.rossi@bancaitaliana.it" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-900 mb-2">Ruolo</label>
+                  <select [(ngModel)]="newUser.ruolo" name="ruolo" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                    <option value="Analyst">Analyst</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Viewer">Viewer</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-900 mb-2">Funzione/Dipartimento</label>
+                  <input type="text" [(ngModel)]="newUser.funzione" name="funzione" placeholder="Compliance" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                </div>
+                <div class="flex space-x-3 mt-8">
+                  <button type="button" (click)="hideAddUserModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                    Annulla
+                  </button>
+                  <button type="button" (click)="addNewUser()" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                    Aggiungi Utente
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
@@ -400,7 +443,7 @@
             </div>
           </div>
 
-          <!-- User List -->
+          <!-- User List (dynamic from utenti input) -->
           <div class="overflow-x-auto">
             <table class="w-full">
               <thead class="bg-gray-50">
@@ -414,128 +457,60 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200">
-                <tr class="hover:bg-gray-50">
+                <tr *ngFor="let utente of utenti" class="hover:bg-gray-50">
                   <td class="py-4 px-6">
                     <div class="flex items-center">
-                      <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-sm font-semibold mr-3">
-                        MR
+                      <div [ngClass]="{
+                        'w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold mr-3': true,
+                        'bg-blue-100 text-blue-600': utente.ruolo === 'Admin',
+                        'bg-green-100 text-green-600': utente.ruolo === 'Analyst',
+                        'bg-gray-100 text-gray-600': utente.ruolo === 'Viewer'
+                      }">
+                        {{ getInitials(utente) }}
                       </div>
                       <div>
-                        <div class="font-medium text-gray-900">Marco Rossi</div>
-                        <div class="text-sm text-gray-500">Responsabile Compliance</div>
+                        <div class="font-medium text-gray-900">{{ utente.nome }}</div>
+                        <div class="text-sm text-gray-500">{{ utente.funzione || utente.ruolo }}</div>
                       </div>
                     </div>
                   </td>
-                  <td class="py-4 px-6 text-gray-600">marco.rossi@bancaitaliana.it</td>
+                  <td class="py-4 px-6 text-gray-600">{{ utente.email }}</td>
                   <td class="py-4 px-6">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                      Admin
+                    <span [ngClass]="{
+                      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium': true,
+                      'bg-red-100 text-red-800': utente.ruolo === 'Admin',
+                      'bg-blue-100 text-blue-800': utente.ruolo === 'Analyst',
+                      'bg-gray-100 text-gray-800': utente.ruolo === 'Viewer'
+                    }">
+                      {{ utente.ruolo }}
                     </span>
                   </td>
-                  <td class="py-4 px-6 text-gray-600">15 Set 2025, 11:30</td>
+                  <td class="py-4 px-6 text-gray-600">{{ utente.ultimoAccesso }}</td>
                   <td class="py-4 px-6">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Attivo
+                    <span [ngClass]="{
+                      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium': true,
+                      'bg-green-100 text-green-800': utente.stato === 'Attivo',
+                      'bg-yellow-100 text-yellow-800': utente.stato === 'Sospeso'
+                    }">
+                      {{ utente.stato }}
                     </span>
                   </td>
                   <td class="py-4 px-6">
                     <div class="flex space-x-2">
                       <button class="text-primary hover:text-blue-700 text-sm font-medium">Modifica</button>
-                      <button class="text-gray-500 hover:text-gray-700 text-sm font-medium">Disabilita</button>
+                      <button *ngIf="utente.stato === 'Attivo'" class="text-gray-500 hover:text-gray-700 text-sm font-medium">Disabilita</button>
+                      <button *ngIf="utente.stato === 'Sospeso'" class="text-green-600 hover:text-green-700 text-sm font-medium">Riattiva</button>
                     </div>
                   </td>
                 </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="py-4 px-6">
-                    <div class="flex items-center">
-                      <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm font-semibold mr-3">
-                        LB
-                      </div>
-                      <div>
-                        <div class="font-medium text-gray-900">Laura Bianchi</div>
-                        <div class="text-sm text-gray-500">Analista Senior</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">laura.bianchi@bancaitaliana.it</td>
-                  <td class="py-4 px-6">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      Analyst
-                    </span>
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">15 Set 2025, 09:15</td>
-                  <td class="py-4 px-6">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Attivo
-                    </span>
-                  </td>
-                  <td class="py-4 px-6">
-                    <div class="flex space-x-2">
-                      <button class="text-primary hover:text-blue-700 text-sm font-medium">Modifica</button>
-                      <button class="text-gray-500 hover:text-gray-700 text-sm font-medium">Disabilita</button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="py-4 px-6">
-                    <div class="flex items-center">
-                      <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-sm font-semibold mr-3">
-                        GV
-                      </div>
-                      <div>
-                        <div class="font-medium text-gray-900">Giuseppe Verdi</div>
-                        <div class="text-sm text-gray-500">Analista Junior</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">giuseppe.verdi@bancaitaliana.it</td>
-                  <td class="py-4 px-6">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      Analyst
-                    </span>
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">14 Set 2025, 16:42</td>
-                  <td class="py-4 px-6">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Attivo
-                    </span>
-                  </td>
-                  <td class="py-4 px-6">
-                    <div class="flex space-x-2">
-                      <button class="text-primary hover:text-blue-700 text-sm font-medium">Modifica</button>
-                      <button class="text-gray-500 hover:text-gray-700 text-sm font-medium">Disabilita</button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="py-4 px-6">
-                    <div class="flex items-center">
-                      <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 text-sm font-semibold mr-3">
-                        AR
-                      </div>
-                      <div>
-                        <div class="font-medium text-gray-900">Anna Rossi</div>
-                        <div class="text-sm text-gray-500">Revisore</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">anna.rossi@bancaitaliana.it</td>
-                  <td class="py-4 px-6">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                      Viewer
-                    </span>
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">13 Set 2025, 14:20</td>
-                  <td class="py-4 px-6">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                      Sospeso
-                    </span>
-                  </td>
-                  <td class="py-4 px-6">
-                    <div class="flex space-x-2">
-                      <button class="text-primary hover:text-blue-700 text-sm font-medium">Modifica</button>
-                      <button class="text-green-600 hover:text-green-700 text-sm font-medium">Riattiva</button>
-                    </div>
+                <tr *ngIf="utenti.length === 0">
+                  <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                    <div class="text-4xl mb-4">👥</div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Nessun utente trovato</h3>
+                    <p class="text-gray-600 mb-6">Aggiungi il primo utente per iniziare.</p>
+                    <button class="bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors">
+                      Aggiungi Nuovo Utente
+                    </button>
                   </td>
                 </tr>
               </tbody>
