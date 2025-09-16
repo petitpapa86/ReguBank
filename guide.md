@@ -686,3 +686,5 @@ export class GoodComponent {
 - `src/app/shared/components/`
 
 This guide ensures consistency across the application and helps maintain high code quality while scaling the project.
+
+//json-server --watch db.json --port 3000

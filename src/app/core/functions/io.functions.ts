@@ -1,43 +1,30 @@
+// Minimal IO functions for json-server API
 export const ioFunctions = {
-  httpGet: (url: string) => async () => {
+  httpGet: <T>(url: string) => async (): Promise<T> => {
     const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    return response.json();
+    if (!response.ok) throw new Error('Network error');
+    return await response.json();
   },
-
-  httpPost: (url: string, data: any) => async () => {
+  httpPost: <T>(url: string, body: unknown) => async (): Promise<T> => {
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify(body)
     });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    return response.json();
+    if (!response.ok) throw new Error('Network error');
+    return await response.json();
   },
-
-  httpPut: (url: string, data: any) => async () => {
+  httpPut: <T>(url: string, body: unknown) => async (): Promise<T> => {
     const response = await fetch(url, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify(body)
     });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    return response.json();
+    if (!response.ok) throw new Error('Network error');
+    return await response.json();
   },
-
-  httpDelete: (url: string) => async () => {
-    const response = await fetch(url, {
-      method: 'DELETE',
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    return response.json();
+  httpDelete: (url: string) => async (): Promise<void> => {
+    const response = await fetch(url, { method: 'DELETE' });
+    if (!response.ok) throw new Error('Network error');
   }
 };
