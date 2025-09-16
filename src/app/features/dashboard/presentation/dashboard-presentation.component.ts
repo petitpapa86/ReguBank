@@ -37,4 +37,8 @@ export class DashboardPresentationComponent {
       this.closeUploadModal();
     }
   }
+
+  startUpload() {
+    this.uploadSelectedFile();
+  }
 }
