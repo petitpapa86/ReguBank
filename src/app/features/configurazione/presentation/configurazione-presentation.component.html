@@ -1,220 +1,606 @@
 <div class="bg-gray-50 min-h-screen">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Header -->
-    <div class="flex items-center space-x-4 mb-8">
-      <button type="button" (click)="goBack.emit()" class="text-primary hover:text-blue-700 font-medium flex items-center">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-        </svg>
-        Torna alla Dashboard
-      </button>
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900">Configurazione</h1>
-        <p class="text-gray-600 mt-1">Impostazioni BCBS 239 per Banca Italiana</p>
+    <!-- Header Section (Guide.md layout pattern) -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <!-- Breadcrumb -->
+      <nav class="text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+        <ol class="list-none p-0 inline-flex">
+          <li class="flex items-center">
+            <span class="font-semibold text-gray-700">Configurazione</span>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Page Header -->
+      <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-8">
+        <div class="mb-4 lg:mb-0">
+          <h1 class="text-3xl font-bold text-gray-900">Configurazione Sistema</h1>
+          <p class="text-gray-600 mt-2">Gestione parametri BCBS 239 e impostazioni banca</p>
+        </div>
+        <div class="flex space-x-3">
+          <button (click)="save.emit()" class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg">
+            Salva Configurazione
+          </button>
+          <button (click)="reset.emit()" class="bg-white text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors">
+            Ripristina Default
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Bank Information -->
-    <form>
-      <div class="bg-white rounded-xl shadow-sm border mb-8">
-        <div class="p-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900">Informazioni Banca</h3>
-          <p class="text-gray-600 text-sm mt-1">Dati identificativi dell'istituto</p>
-        </div>
-        <div class="p-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Denominazione Sociale</label>
-              <input type="text" [(ngModel)]="model.denominazione" name="denominazione" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Codice ABI</label>
-              <input type="text" [(ngModel)]="model.abi" name="abi" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Codice LEI</label>
-              <input type="text" [(ngModel)]="model.lei" name="lei" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Valuta di Base</label>
-              <select [(ngModel)]="model.valuta" name="valuta" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
-                <option>EUR - Euro</option>
-                <option>USD - Dollaro Americano</option>
-                <option>GBP - Sterlina Inglese</option>
-              </select>
-            </div>
-          </div>
-        </div>
+    <!-- Configuration Tabs -->
+    <div class="mb-8">
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex space-x-8">
+          <button (click)="activeTab = 'bank'" [ngClass]="{'active-tab border-primary text-primary': activeTab === 'bank', 'tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'bank'}" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+            Informazioni Banca
+          </button>
+          <button (click)="activeTab = 'bcbs'" [ngClass]="{'active-tab border-primary text-primary': activeTab === 'bcbs', 'tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'bcbs'}" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+            Parametri BCBS 239
+          </button>
+          <button (click)="activeTab = 'reports'" [ngClass]="{'active-tab border-primary text-primary': activeTab === 'reports', 'tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'reports'}" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+            Configurazione Report
+          </button>
+          <button (click)="activeTab = 'users'" [ngClass]="{'active-tab border-primary text-primary': activeTab === 'users', 'tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'users'}" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+            Gestione Utenti
+          </button>
+        </nav>
       </div>
+    </div>
 
-      <!-- BCBS 239 Settings -->
-      <div class="bg-white rounded-xl shadow-sm border mb-8">
-        <div class="p-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900">Parametri BCBS 239</h3>
-          <p class="text-gray-600 text-sm mt-1">Soglie e limiti normativi</p>
-        </div>
-        <div class="p-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Limite Grandi Esposizioni (%)</label>
-              <input type="number" [(ngModel)]="model.limiteGrandiEsposizioni" name="limiteGrandiEsposizioni" min="1" max="100" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
-              <p class="text-xs text-gray-500 mt-1">Limite massimo per singola controparte (standard: 25%)</p>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Soglia Grande Esposizione (%)</label>
-              <input type="number" [(ngModel)]="model.sogliaGrandeEsposizione" name="sogliaGrandeEsposizione" min="1" max="25" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
-              <p class="text-xs text-gray-500 mt-1">Soglia per classificazione (standard: 10%)</p>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Capitale Ammissibile (€)</label>
-              <input type="text" [(ngModel)]="model.capitaleAmmissibile" name="capitaleAmmissibile" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
-              <p class="text-xs text-gray-500 mt-1">Base per calcolo percentuali esposizione</p>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Soglia Qualità Dati (%)</label>
-              <input type="number" [(ngModel)]="model.sogliaQualitaDati" name="sogliaQualitaDati" min="80" max="100" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
-              <p class="text-xs text-gray-500 mt-1">Soglia minima per conformità qualità</p>
-            </div>
+    <!-- Tab Content -->
+    <div>
+      <!-- Bank Information Tab -->
+      <div *ngIf="activeTab === 'bank'" class="tab-content">
+        <div class="bg-white rounded-xl shadow-sm border p-8">
+          <div class="mb-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-2">Informazioni Istituto Bancario</h2>
+            <p class="text-gray-600">Dati essenziali per la conformità alle disposizioni Banca d'Italia</p>
           </div>
-        </div>
-      </div>
 
-      <!-- Report Settings -->
-      <div class="bg-white rounded-xl shadow-sm border mb-8">
-        <div class="p-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900">Impostazioni Report</h3>
-          <p class="text-gray-600 text-sm mt-1">Configurazione generazione automatica</p>
-        </div>
-        <div class="p-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Template Report</label>
-              <select [(ngModel)]="model.templateReport" name="templateReport" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
-                <option>Banca d'Italia Standard</option>
-                <option>EBA Template</option>
-                <option>Personalizzato</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Lingua Report</label>
-              <select [(ngModel)]="model.linguaReport" name="linguaReport" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
-                <option>Italiano</option>
-                <option>Inglese</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Frequenza Generazione</label>
-              <select [(ngModel)]="model.frequenzaGenerazione" name="frequenzaGenerazione" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
-                <option>Mensile</option>
-                <option>Trimestrale</option>
-                <option>Su richiesta</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Email Notifiche</label>
-              <input type="email" [(ngModel)]="model.emailNotifiche" name="emailNotifiche" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary focus:border-primary">
-            </div>
-          </div>
-          <!-- Checkboxes -->
-          <div class="mt-6 space-y-3">
-            <div class="flex items-center">
-              <input type="checkbox" [(ngModel)]="model.invioAutomatico" name="invioAutomatico" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
-              <label class="ml-2 block text-sm text-gray-700">Invio automatico report a Banca d'Italia</label>
-            </div>
-            <div class="flex items-center">
-              <input type="checkbox" [(ngModel)]="model.notificaViolazioni" name="notificaViolazioni" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
-              <label class="ml-2 block text-sm text-gray-700">Notifica email per violazioni critiche</label>
-            </div>
-            <div class="flex items-center">
-              <input type="checkbox" [(ngModel)]="model.archiviazioneAutomatica" name="archiviazioneAutomatica" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
-              <label class="ml-2 block text-sm text-gray-700">Archiviazione automatica report (dopo 12 mesi)</label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- User Management -->
-      <div class="bg-white rounded-xl shadow-sm border mb-8">
-        <div class="p-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900">Gestione Utenti</h3>
-          <p class="text-gray-600 text-sm mt-1">Accessi e permessi</p>
-        </div>
-        <div class="p-6">
-          <div class="space-y-4">
-            <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-              <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span class="text-blue-600 font-semibold text-sm">MR</span>
-                </div>
-                <div>
-                  <div class="font-medium text-gray-900">Marco Rossi</div>
-                  <div class="text-sm text-gray-500">marco.rossi@bancaitaliana.it</div>
-                </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Denominazione Sociale *</label>
+                <input type="text" value="Banca Italiana SpA" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                <p class="text-xs text-gray-500 mt-1">Denominazione completa dell'istituto bancario</p>
               </div>
-              <div class="flex items-center space-x-3">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Amministratore
-                </span>
-                <button type="button" class="text-primary hover:text-blue-700 text-sm font-medium">
-                  Modifica
-                </button>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Codice ABI *</label>
+                <input type="text" value="12345" maxlength="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors font-mono">
+                <p class="text-xs text-gray-500 mt-1">Codice identificativo Banca d'Italia (5 cifre)</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Codice LEI *</label>
+                <input type="text" value="549300ABCDEFGHIJ1234" maxlength="20" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors font-mono">
+                <p class="text-xs text-gray-500 mt-1">Legal Entity Identifier (20 caratteri alfanumerici)</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Sede Legale</label>
+                <textarea rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors" placeholder="Via Milano 123, 20100 Milano MI, Italia">Via Roma 1, 20121 Milano MI, Italia</textarea>
               </div>
             </div>
-            <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-              <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                  <span class="text-gray-600 font-semibold text-sm">LB</span>
-                </div>
-                <div>
-                  <div class="font-medium text-gray-900">Laura Bianchi</div>
-                  <div class="text-sm text-gray-500">laura.bianchi@bancaitaliana.it</div>
-                </div>
+
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Gruppo Bancario</label>
+                <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                  <option>Istituto Indipendente</option>
+                  <option>Gruppo Intesa Sanpaolo</option>
+                  <option>Gruppo UniCredit</option>
+                  <option>Gruppo Banco BPM</option>
+                  <option>Altri gruppi</option>
+                </select>
               </div>
-              <div class="flex items-center space-x-3">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  Analista
-                </span>
-                <button type="button" class="text-primary hover:text-blue-700 text-sm font-medium">
-                  Modifica
-                </button>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Tipologia Banca</label>
+                <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                  <option>Banca Commerciale</option>
+                  <option>Banca Cooperativa</option>
+                  <option>Banca di Credito Cooperativo</option>
+                  <option>Banca di Investimento</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Categoria Vigilanza</label>
+                <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                  <option>Banche significative (SSM)</option>
+                  <option>Banche meno significative</option>
+                  <option>Gruppo SREP 1</option>
+                  <option>Gruppo SREP 2</option>
+                </select>
+              </div>
+
+              <!-- Status Card -->
+              <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div class="flex items-center">
+                  <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <div>
+                    <div class="text-sm font-semibold text-green-800">Configurazione Valida</div>
+                    <div class="text-xs text-green-700">Tutti i campi obbligatori sono compilati correttamente</div>
+                  </div>
+                </div>
               </div>
             </div>
-            <button type="button" class="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors">
-              + Aggiungi Nuovo Utente
-            </button>
           </div>
         </div>
       </div>
 
-      <!-- Save Button -->
-      <div class="flex justify-end space-x-4">
-        <button type="button" (click)="reset.emit()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-          Ripristina Default
-        </button>
-        <button type="button" (click)="save.emit()" class="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
-          Salva Configurazione
-        </button>
-      </div>
-    </form>
+  <!-- BCBS 239 Parameters Tab -->
+  <div *ngIf="activeTab === 'bcbs'" class="tab-content">
+        <div class="bg-white rounded-xl shadow-sm border p-8">
+          <div class="mb-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-2">Parametri BCBS 239</h2>
+            <p class="text-gray-600">Soglie e limiti per l'analisi delle grandi esposizioni</p>
+          </div>
 
-    <!-- Notification -->
-    <div *ngIf="notification" class="fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-all duration-300"
-      [class.bg-green-100]="notificationType === 'success'"
-      [class.border-green-200]="notificationType === 'success'"
-      [class.text-green-800]="notificationType === 'success'"
-      [class.bg-red-100]="notificationType === 'error'"
-      [class.border-red-200]="notificationType === 'error'"
-      [class.text-red-800]="notificationType === 'error'"
-      [class.bg-blue-100]="notificationType === 'info'"
-      [class.border-blue-200]="notificationType === 'info'"
-      [class.text-blue-800]="notificationType === 'info'">
-      <div class="flex items-center">
-        <span>{{ notification }}</span>
-        <button type="button" (click)="notificationDismiss.emit()" class="ml-3 text-gray-500 hover:text-gray-700">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-6">
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-blue-900 mb-4">Limiti Grandi Esposizioni</h3>
+                                
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Limite Grande Esposizione</label>
+                    <div class="flex items-center space-x-2">
+                      <input type="number" value="25" min="0" max="100" class="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-center font-mono">
+                      <span class="text-gray-700">% del capitale ammissibile</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Standard UE: 25% (art. 395 CRR)</p>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Soglia Classificazione</label>
+                    <div class="flex items-center space-x-2">
+                      <input type="number" value="10" min="0" max="100" class="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-center font-mono">
+                      <span class="text-gray-700">% del capitale ammissibile</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Soglia per classificare una posizione come "grande esposizione"</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-green-900 mb-4">Capitale e Base di Calcolo</h3>
+                                
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Capitale Ammissibile</label>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-gray-700">€</span>
+                      <input type="number" value="2500000000" step="1000000" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors font-mono">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Capitale di vigilanza totale (Tier 1 + Tier 2)</p>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Metodo Calcolo</label>
+                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                      <option>Approccio Standardizzato</option>
+                      <option>Approccio IRB di Base</option>
+                      <option>Approccio IRB Avanzato</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-6">
+              <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-yellow-900 mb-4">Qualità dei Dati</h3>
+                                
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Soglia Qualità Minima</label>
+                    <div class="flex items-center space-x-2">
+                      <input type="number" value="95" min="0" max="100" class="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-center font-mono">
+                      <span class="text-gray-700">% completezza</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Soglia minima per accettare un dataset</p>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Validazione File</label>
+                    <div class="space-y-2">
+                      <label class="flex items-center">
+                        <input type="radio" name="validazioneFile" checked class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Automatica (raccomandato) - Controlli standard per banche italiane</span>
+                      </label>
+                      <label class="flex items-center">
+                        <input type="radio" name="validazioneFile" class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Personalizzata - Configurazione avanzata disponibile su richiesta</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-purple-900 mb-4">Frequenze di Reporting</h3>
+                                
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Frequenza Standard</label>
+                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                      <option>Mensile</option>
+                      <option>Trimestrale</option>
+                      <option>Semestrale</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Giorni per Submission</label>
+                    <input type="number" value="20" min="1" max="30" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                    <p class="text-xs text-gray-500 mt-1">Giorni disponibili dopo fine periodo di riferimento</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  <!-- Report Configuration Tab -->
+  <div *ngIf="activeTab === 'reports'" class="tab-content">
+        <div class="bg-white rounded-xl shadow-sm border p-8">
+          <div class="mb-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-2">Configurazione Report</h2>
+            <p class="text-gray-600">Impostazioni per la generazione automatica dei report BCBS 239</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-6">
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-blue-900 mb-4">Template e Formato</h3>
+                                
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Template Report</label>
+                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                      <option>Banca d'Italia - Standard</option>
+                      <option>Banca d'Italia - Dettagliato</option>
+                      <option>ECB - Consolidated</option>
+                      <option>Template Personalizzato</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Formato Output</label>
+                    <div class="space-y-2">
+                      <label class="flex items-center">
+                        <input type="radio" name="format" value="pdf" checked class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">PDF (raccomandato)</span>
+                      </label>
+                      <label class="flex items-center">
+                        <input type="radio" name="format" value="excel" class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Excel (.xlsx)</span>
+                      </label>
+                      <label class="flex items-center">
+                        <input type="radio" name="format" value="both" class="text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Entrambi i formati</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Lingua Report</label>
+                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                      <option>Italiano</option>
+                      <option>English</option>
+                      <option>Bilingue (IT/EN)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-green-900 mb-4">Distribuzione Automatica</h3>
+                                
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Email Compliance Team</label>
+                    <input type="email" value="compliance@bancaitaliana.it" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Email CC (opzionale)</label>
+                    <input type="email" placeholder="direzione.rischi@bancaitaliana.it" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                  </div>
+
+                  <div>
+                    <label class="flex items-center mt-4">
+                      <input type="checkbox" checked class="rounded border-gray-300 text-primary focus:ring-primary">
+                      <span class="ml-2 text-sm text-gray-700">Invio automatico report completati</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-6">
+              <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-yellow-900 mb-4">Pianificazione Automatica</h3>
+                                
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Generazione Automatica</label>
+                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                      <option>Disabilitata</option>
+                      <option>Ogni elaborazione completata</option>
+                      <option>Pianificazione settimanale</option>
+                      <option>Pianificazione mensile</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Giorno della settimana</label>
+                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                      <option>Lunedì</option>
+                      <option>Martedì</option>
+                      <option>Mercoledì</option>
+                      <option>Giovedì</option>
+                      <option>Venerdì</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Orario</label>
+                    <input type="time" value="09:00" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-red-900 mb-4">Submission Banca d'Italia</h3>
+                                
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="text-sm font-semibold text-gray-900">Auto-submission</div>
+                      <div class="text-xs text-gray-600">Invio automatico a Banca d'Italia via SWIFT</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" class="sr-only peer">
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                    </label>
+                  </div>
+                                    
+                  <div class="text-xs text-red-700 bg-red-100 rounded p-2">
+                    ⚠️ Funzionalità in sviluppo. Attualmente disponibile solo download manuale.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  <!-- User Management Tab -->
+  <div *ngIf="activeTab === 'users'" class="tab-content">
+        <div class="bg-white rounded-xl shadow-sm border">
+          <div class="p-8 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+              <div>
+                <h2 class="text-xl font-bold text-gray-900 mb-2">Gestione Utenti</h2>
+                <p class="text-gray-600">Controllo accessi e permessi per il sistema ComplianceCore</p>
+              </div>
+              <button onclick="showAddUserModal()" class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Aggiungi Nuovo Utente
+              </button>
+            </div>
+          </div>
+
+          <!-- User List -->
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="text-left py-4 px-6 font-semibold text-gray-700">Utente</th>
+                  <th class="text-left py-4 px-6 font-semibold text-gray-700">Email</th>
+                  <th class="text-left py-4 px-6 font-semibold text-gray-700">Ruolo</th>
+                  <th class="text-left py-4 px-6 font-semibold text-gray-700">Ultimo Accesso</th>
+                  <th class="text-left py-4 px-6 font-semibold text-gray-700">Stato</th>
+                  <th class="text-left py-4 px-6 font-semibold text-gray-700">Azioni</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50">
+                  <td class="py-4 px-6">
+                    <div class="flex items-center">
+                      <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-sm font-semibold mr-3">
+                        MR
+                      </div>
+                      <div>
+                        <div class="font-medium text-gray-900">Marco Rossi</div>
+                        <div class="text-sm text-gray-500">Responsabile Compliance</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">marco.rossi@bancaitaliana.it</td>
+                  <td class="py-4 px-6">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      Admin
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">15 Set 2025, 11:30</td>
+                  <td class="py-4 px-6">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      Attivo
+                    </span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <div class="flex space-x-2">
+                      <button class="text-primary hover:text-blue-700 text-sm font-medium">Modifica</button>
+                      <button class="text-gray-500 hover:text-gray-700 text-sm font-medium">Disabilita</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="py-4 px-6">
+                    <div class="flex items-center">
+                      <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm font-semibold mr-3">
+                        LB
+                      </div>
+                      <div>
+                        <div class="font-medium text-gray-900">Laura Bianchi</div>
+                        <div class="text-sm text-gray-500">Analista Senior</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">laura.bianchi@bancaitaliana.it</td>
+                  <td class="py-4 px-6">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      Analyst
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">15 Set 2025, 09:15</td>
+                  <td class="py-4 px-6">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      Attivo
+                    </span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <div class="flex space-x-2">
+                      <button class="text-primary hover:text-blue-700 text-sm font-medium">Modifica</button>
+                      <button class="text-gray-500 hover:text-gray-700 text-sm font-medium">Disabilita</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="py-4 px-6">
+                    <div class="flex items-center">
+                      <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-sm font-semibold mr-3">
+                        GV
+                      </div>
+                      <div>
+                        <div class="font-medium text-gray-900">Giuseppe Verdi</div>
+                        <div class="text-sm text-gray-500">Analista Junior</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">giuseppe.verdi@bancaitaliana.it</td>
+                  <td class="py-4 px-6">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      Analyst
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">14 Set 2025, 16:42</td>
+                  <td class="py-4 px-6">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      Attivo
+                    </span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <div class="flex space-x-2">
+                      <button class="text-primary hover:text-blue-700 text-sm font-medium">Modifica</button>
+                      <button class="text-gray-500 hover:text-gray-700 text-sm font-medium">Disabilita</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="py-4 px-6">
+                    <div class="flex items-center">
+                      <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 text-sm font-semibold mr-3">
+                        AR
+                      </div>
+                      <div>
+                        <div class="font-medium text-gray-900">Anna Rossi</div>
+                        <div class="text-sm text-gray-500">Revisore</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">anna.rossi@bancaitaliana.it</td>
+                  <td class="py-4 px-6">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      Viewer
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">13 Set 2025, 14:20</td>
+                  <td class="py-4 px-6">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      Sospeso
+                    </span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <div class="flex space-x-2">
+                      <button class="text-primary hover:text-blue-700 text-sm font-medium">Modifica</button>
+                      <button class="text-green-600 hover:text-green-700 text-sm font-medium">Riattiva</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Role Permissions Info -->
+          <div class="p-6 bg-gray-50 border-t">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Permessi per Ruolo</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="bg-white rounded-lg p-4 border">
+                <div class="flex items-center mb-3">
+                  <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                    <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                  </div>
+                  <h4 class="font-semibold text-gray-900">Admin</h4>
+                </div>
+                <ul class="text-sm text-gray-600 space-y-1">
+                  <li>• Gestione completa sistema</li>
+                  <li>• Configurazione parametri</li>
+                  <li>• Gestione utenti</li>
+                  <li>• Accesso a tutti i report</li>
+                  <li>• Modifica configurazioni</li>
+                </ul>
+              </div>
+              <div class="bg-white rounded-lg p-4 border">
+                <div class="flex items-center mb-3">
+                  <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                  </div>
+                  <h4 class="font-semibold text-gray-900">Analyst</h4>
+                </div>
+                <ul class="text-sm text-gray-600 space-y-1">
+                  <li>• Upload e analisi file</li>
+                  <li>• Visualizzazione risultati</li>
+                  <li>• Generazione report</li>
+                  <li>• Export dati</li>
+                  <li>• Dashboard compliance</li>
+                </ul>
+              </div>
+              <div class="bg-white rounded-lg p-4 border">
+                <div class="flex items-center mb-3">
+                  <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                  </div>
+                  <h4 class="font-semibold text-gray-900">Viewer</h4>
+                </div>
+                <ul class="text-sm text-gray-600 space-y-1">
+                  <li>• Visualizzazione dashboard</li>
+                  <li>• Accesso report completati</li>
+                  <li>• Download PDF</li>
+                  <li>• Consultazione storico</li>
+                  <li>• Solo lettura</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

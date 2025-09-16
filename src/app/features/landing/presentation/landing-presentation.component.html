@@ -1,0 +1,510 @@
+<!-- Navigation -->
+<nav class="bg-white shadow-lg fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center">
+        <div class="text-primary text-xl font-bold">ComplianceCore</div>
+        <div class="text-gray-600 ml-2 text-sm">| BCBS 239</div>
+      </div>
+      <div class="hidden md:flex items-center space-x-8">
+        <a href="#problema" class="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">Il Problema</a>
+        <a href="#come-funziona" class="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">Come Funziona</a>
+        <a href="#prezzi" class="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">Prezzi</a>
+      </div>
+      <button (click)="startRegistration.emit()" class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+        Inizia Ora
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="h-16"></div>
+<!-- Hero Section -->
+<section class="gradient-bg hero-pattern py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <!-- Left Column - Text -->
+      <div class="text-gray-700">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+          BCBS 239 in <span class="text-yellow-300">17 minuti</span><br>invece di 3 giorni
+        </h1>
+        <p class="text-xl mb-8 text-gray/90 leading-relaxed">
+          Trasforma l'analisi delle grandi esposizioni da processo manuale a automatico. 
+          Report conformi Banca d'Italia pronti in pochi clic.
+        </p>
+        <!-- Key Benefits -->
+        <div class="space-y-4 mb-8">
+          <div class="flex items-center space-x-3">
+            <svg class="w-6 h-6 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span class="text-lg">Da 3 giorni a 17 minuti di elaborazione</span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <svg class="w-6 h-6 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-lg">100% conforme alle disposizioni Banca d'Italia</span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <svg class="w-6 h-6 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+            <span class="text-lg">Risparmio di €15.000+ al mese sui costi analisti</span>
+          </div>
+        </div>
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+          <button (click)="startRegistration.emit()" class="bg-yellow-400 text-gray-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-300 transition-colors shadow-lg">
+            Inizia Ora - €500/mese
+          </button>
+          <button (click)="learnMore.emit()" class="bg-white/20 text-gray px-8 py-4 rounded-xl font-semibold hover:bg-white/30 transition-colors border border-white/30">
+            Scopri Come Funziona
+          </button>
+        </div>
+      </div>
+      <!-- Right Column - Visual -->
+      <div class="relative">
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 floating">
+          <!-- Simulated Dashboard -->
+          <div class="bg-white rounded-xl shadow-2xl overflow-hidden">
+            <div class="bg-primary p-4">
+              <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 bg-white/30 rounded-full"></div>
+                <div class="w-3 h-3 bg-white/30 rounded-full"></div>
+                <div class="w-3 h-3 bg-white/30 rounded-full"></div>
+                <div class="flex-1 text-center text-white text-sm font-medium">ComplianceCore Dashboard</div>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-green-600">87.2%</div>
+                  <div class="text-xs text-gray-600">Conformità</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-blue-600">125K</div>
+                  <div class="text-xs text-gray-600">Record</div>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between text-xs">
+                  <span>Elaborazione:</span>
+                  <span class="text-green-600">Completata</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-green-500 h-2 rounded-full" style="width: 100%"></div>
+                </div>
+                <div class="text-center text-xs text-gray-500">17 minuti</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Problem Section -->
+<section id="problema" class="py-20 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+        Il Problema che Ogni Banca Italiana Conosce
+      </h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        L'analisi BCBS 239 delle grandi esposizioni è un incubo mensile per i team di compliance
+      </p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Problem 1 -->
+      <div class="bg-white rounded-xl p-8 shadow-sm border text-center">
+        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-4">Tempi Lunghissimi</h3>
+        <p class="text-gray-600 mb-4">
+          2-3 giorni di lavoro manuale per ogni analisi mensile. Gli analisti perdono tempo prezioso su task ripetitivi.
+        </p>
+        <div class="bg-red-50 rounded-lg p-4">
+          <div class="text-2xl font-bold text-red-600">3 giorni</div>
+          <div class="text-sm text-red-700">per 125.000 record</div>
+        </div>
+      </div>
+      <!-- Problem 2 -->
+      <div class="bg-white rounded-xl p-8 shadow-sm border text-center">
+        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.5 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-4">Errori Umani</h3>
+        <p class="text-gray-600 mb-4">
+          Fogli Excel complessi, formule manuali, controlli ripetitivi. Alto rischio di errori che costano caro.
+        </p>
+        <div class="bg-orange-50 rounded-lg p-4">
+          <div class="text-2xl font-bold text-orange-600">€50K+</div>
+          <div class="text-sm text-orange-700">costo medio errore</div>
+        </div>
+      </div>
+      <!-- Problem 3 -->
+      <div class="bg-white rounded-xl p-8 shadow-sm border text-center">
+        <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-4">Costi Elevati</h3>
+        <p class="text-gray-600 mb-4">
+          Team di analisti dedicati, software costosi, consulenze esterne. Budget compliance sempre sotto pressione.
+        </p>
+        <div class="bg-yellow-50 rounded-lg p-4">
+          <div class="text-2xl font-bold text-yellow-600">€25K+</div>
+          <div class="text-sm text-yellow-700">al mese in risorse</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="come-funziona" class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+        Come Funziona in 4 Semplici Passi
+      </h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Dalla registrazione al primo report BCBS 239 in meno di 30 minuti
+      </p>
+    </div>
+    <div class="relative">
+      <div class="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-primary/20 transform -translate-y-1/2"></div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+        <!-- Step 1 -->
+        <div class="text-center">
+          <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">1</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-3">Registrati e Paga</h3>
+          <p class="text-gray-600 text-sm">Crea account, inserisci i dati della tua banca e attiva l'abbonamento €500/mese con Stripe.</p>
+        </div>
+        <!-- Step 2 -->
+        <div class="text-center">
+          <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">2</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-3">Carica il File</h3>
+          <p class="text-gray-600 text-sm">Upload del tuo Excel delle grandi esposizioni. Supportiamo i formati più comuni delle banche italiane.</p>
+        </div>
+        <!-- Step 3 -->
+        <div class="text-center">
+          <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">3</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-3">Attendi 17 Minuti</h3>
+          <p class="text-gray-600 text-sm">Il sistema analizza automaticamente tutti i record, identifica violazioni e calcola le metriche BCBS 239.</p>
+        </div>
+        <!-- Step 4 -->
+        <div class="text-center">
+          <div class="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">✓</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-3">Scarica Report</h3>
+          <p class="text-gray-600 text-sm">Report PDF completo, conforme alle disposizioni Banca d'Italia, pronto per la submission.</p>
+        </div>
+      </div>
+    </div>
+    <!-- ROI Calculator -->
+    <div class="mt-20 bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-8">
+      <div class="text-center mb-8">
+        <h3 class="text-2xl font-bold text-gray-900 mb-4">Il Tuo ROI Garantito</h3>
+        <p class="text-gray-600">Calcolo reale del risparmio mensile</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Before -->
+        <div class="bg-white rounded-xl p-6 border-2 border-red-200">
+          <h4 class="text-lg font-bold text-red-800 mb-4 text-center">❌ Processo Attuale</h4>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">2 analisti senior (3 giorni/mese)</span>
+              <span class="font-semibold">€4.500</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Software e licenze</span>
+              <span class="font-semibold">€800</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Consulenza esterna</span>
+              <span class="font-semibold">€3.000</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Costo rischio errori</span>
+              <span class="font-semibold">€2.000</span>
+            </div>
+            <div class="border-t pt-3 flex justify-between font-bold text-red-600">
+              <span>Totale Mensile:</span>
+              <span>€10.300</span>
+            </div>
+          </div>
+        </div>
+        <!-- After -->
+        <div class="bg-white rounded-xl p-6 border-2 border-green-200">
+          <h4 class="text-lg font-bold text-green-800 mb-4 text-center">✅ Con ComplianceCore</h4>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">ComplianceCore</span>
+              <span class="font-semibold">€500</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">1 analista (2 ore/mese)</span>
+              <span class="font-semibold">€150</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Rischio errori</span>
+              <span class="font-semibold">€0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Setup e training</span>
+              <span class="font-semibold">€0</span>
+            </div>
+            <div class="border-t pt-3 flex justify-between font-bold text-green-600">
+              <span>Totale Mensile:</span>
+              <span>€650</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-8 p-6 bg-yellow-100 rounded-xl">
+        <div class="text-3xl font-bold text-yellow-800 mb-2">€9.650 di risparmio al mese</div>
+        <div class="text-yellow-700">ROI del 1.485% • Break-even in 1.6 giorni</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="prezzi" class="py-20 bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+        Prezzo Semplice e Trasparente
+      </h2>
+      <p class="text-xl text-gray-600">
+        Un prezzo, tutte le funzionalità. Nessun costo nascosto.
+      </p>
+    </div>
+    <!-- Pricing Card -->
+    <div class="bg-white rounded-2xl shadow-xl border-2 border-primary/20 overflow-hidden max-w-lg mx-auto">
+      <!-- Header -->
+      <div class="gradient-bg p-8 text-center">
+        <h3 class="text-2xl font-bold text-white mb-2">BCBS 239 Professional</h3>
+        <p class="text-white/90">Per banche italiane</p>
+      </div>
+      <!-- Price -->
+      <div class="p-8 text-center">
+        <div class="flex items-baseline justify-center mb-6">
+          <span class="text-5xl font-bold text-gray-900">€500</span>
+          <span class="text-gray-600 ml-2">/mese</span>
+        </div>
+        <!-- Features -->
+        <ul class="space-y-4 mb-8 text-left">
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>File illimitati</strong> (fino a 125K record/file)</span>
+          </li>
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>Report Banca d'Italia</strong> automatici</span>
+          </li>
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>Analisi violazioni</strong> in tempo reale</span>
+          </li>
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>Supporto email</strong> prioritario</span>
+          </li>
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>Setup personalizzato</strong> per la tua banca</span>
+          </li>
+        </ul>
+        <!-- CTA Button -->
+        <button (click)="startRegistration.emit()" class="w-full bg-primary text-white py-4 px-6 rounded-xl font-semibold text-lg hover:bg-blue-700 transition-colors shadow-lg mb-4">
+          Inizia Ora - €500/mese
+        </button>
+        <p class="text-xs text-gray-500">
+          ✓ Nessun setup fee ✓ Cancella quando vuoi ✓ Supporto in italiano
+        </p>
+      </div>
+    </div>
+    <!-- Money Back Guarantee -->
+    <div class="text-center mt-12">
+      <div class="inline-flex items-center space-x-3 bg-green-100 rounded-full px-6 py-3">
+        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+        </svg>
+        <span class="text-green-800 font-semibold">Garanzia 30 giorni o rimborso completo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Benefits Section -->
+<section class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+        Perché le Banche Italiane Scelgono ComplianceCore
+      </h2>
+      <p class="text-xl text-gray-600">
+        Vantaggi concreti per il tuo team di compliance
+      </p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Benefit 1 -->
+      <div class="bg-white rounded-xl p-8 shadow-sm border text-center">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-4">Velocità Estrema</h3>
+        <p class="text-gray-600 mb-4">
+          Da 3 giorni di lavoro manuale a 17 minuti completamente automatici. Libera il tuo team per analisi strategiche.
+        </p>
+        <div class="bg-green-50 rounded-lg p-4">
+          <div class="text-2xl font-bold text-green-600">95%</div>
+          <div class="text-sm text-green-700">tempo risparmiato</div>
+        </div>
+      </div>
+      <!-- Benefit 2 -->
+      <div class="bg-white rounded-xl p-8 shadow-sm border text-center">
+        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-4">Zero Errori</h3>
+        <p class="text-gray-600 mb-4">
+          Eliminazione completa degli errori umani. Calcoli automatici sempre precisi e conformi.
+        </p>
+        <div class="bg-blue-50 rounded-lg p-4">
+          <div class="text-2xl font-bold text-blue-600">100%</div>
+          <div class="text-sm text-blue-700">accuratezza garantita</div>
+        </div>
+      </div>
+      <!-- Benefit 3 -->
+      <div class="bg-white rounded-xl p-8 shadow-sm border text-center">
+        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-4">Conformità Totale</h3>
+        <p class="text-gray-600 mb-4">
+          Report automatici già conformi alle disposizioni Banca d'Italia. Nessuna revisione necessaria.
+        </p>
+        <div class="bg-purple-50 rounded-lg p-4">
+          <div class="text-2xl font-bold text-purple-600">100%</div>
+          <div class="text-sm text-purple-700">conformità BCBS 239</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section id="register" class="py-16 gradient-bg hero-pattern">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-3xl md:text-4xl font-bold text-gray mb-6">
+      Inizia la Tua Trasformazione Oggi
+    </h2>
+    <p class="text-xl text-gray/90 mb-8 max-w-2xl mx-auto">
+      Unisciti alle banche italiane che stanno automatizzando BCBS 239. Setup immediato, primi risultati in 17 minuti.
+    </p>
+    <!-- CTA Buttons -->
+    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 justify-center mb-8">
+      <button (click)="startRegistration.emit()" class="bg-yellow-400 text-gray-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-300 transition-colors shadow-lg">
+        Inizia Ora - €500/mese
+      </button>
+      <button (click)="contactUs.emit()" class="bg-white/20 text-gray px-8 py-4 rounded-xl font-semibold hover:bg-white/30 transition-colors border border-white/30">
+        Parla con Noi
+      </button>
+    </div>
+    <!-- Trust Indicators -->
+    <div class="flex flex-wrap justify-center items-center space-x-8 text-white/80 text-sm">
+      <div class="flex items-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <span>Setup immediato</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <span>Supporto in italiano</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <span>Garanzia 30 giorni</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-white py-12">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div>
+        <div class="flex items-center mb-4">
+          <div class="text-white text-xl font-bold">ComplianceCore</div>
+          <div class="text-white/80 ml-2 text-sm">| BCBS 239</div>
+        </div>
+        <p class="text-gray-400 text-sm">
+          La soluzione più semplice per la conformità BCBS 239 delle banche italiane.
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-4">Prodotto</h4>
+        <div class="space-y-2 text-sm">
+          <a href="#problema" class="text-gray-400 hover:text-white block">Il Problema</a>
+          <a href="#come-funziona" class="text-gray-400 hover:text-white block">Come Funziona</a>
+          <a href="#prezzi" class="text-gray-400 hover:text-white block">Prezzi</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-4">Supporto</h4>
+        <div class="space-y-2 text-sm">
+          <a href="#" class="text-gray-400 hover:text-white block">Guida BCBS 239</a>
+          <a href="#" class="text-gray-400 hover:text-white block">Contatti</a>
+          <a href="#" class="text-gray-400 hover:text-white block">Status Sistema</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-4">Contatti</h4>
+        <div class="space-y-2 text-sm text-gray-400">
+          <p>hello@compliancecore.io</p>
+          <p>+39 02 1234 5678</p>
+          <p>Milano, Italia</p>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-gray-800 pt-8 mt-8">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-400 text-sm">© 2025 ComplianceCore. Tutti i diritti riservati.</p>
+        <div class="flex space-x-6 text-sm text-gray-400 mt-4 md:mt-0">
+          <a href="#" class="hover:text-white">Privacy Policy</a>
+          <a href="#" class="hover:text-white">Termini di Servizio</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

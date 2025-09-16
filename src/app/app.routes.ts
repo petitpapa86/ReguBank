@@ -10,6 +10,10 @@ import { RisultatiAnalisiComponent } from './features/dashboard/presentation/ris
 export const routes: Routes = [
 	{
 		path: '',
+		loadComponent: () => import('./features/landing/container/landing-container.component').then(m => m.LandingContainerComponent)
+	},
+	{
+		path: '',
 		component: LayoutComponent,
 		children: [
 			{ path: 'dashboard', component: DashboardContainerComponent },

@@ -1,3 +1,11 @@
+export interface ConfigurazioneBCBS239 {
+  limiteGrandiEsposizioni: number;
+  sogliaClassificazione: number;
+  capitaleAmmissibile: number;
+  metodoCalcolo: string;
+  sogliaQualitaMinima: number;
+  validazioneFile: 'automatica' | 'personalizzata';
+}
 export interface DashboardStats {
   lastUpdated: string;
   filesProcessed: number;
