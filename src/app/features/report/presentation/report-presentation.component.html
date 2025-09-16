@@ -6,12 +6,7 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center space-x-4">
-  <button (click)="back.emit()" class="text-primary hover:text-blue-700 font-medium flex items-center">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-          Torna ai Risultati
-        </button>
+ 
         <div>
           <h1 class="text-3xl font-bold text-gray-900">Generazione Report BCBS 239</h1>
           <p class="text-gray-600 mt-1">Report conforme agli standard Banca d'Italia per le grandi esposizioni</p>
@@ -160,8 +155,72 @@
             <!-- Page Previews -->
             <div [ngSwitch]="currentPage">
               <div *ngSwitchCase="1" class="page-preview mx-auto" style="width: 600px; height: 800px; display: block;">
-                <!-- Page 1 content (copertina) -->
-                <!-- ...existing code... -->
+                <div class="h-full p-8 text-xs leading-relaxed relative">
+                  <!-- Header -->
+                  <div class="text-center mb-8">
+                    <div class="w-16 h-16 banca-italia-seal rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <span class="text-white font-bold text-lg">BI</span>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-900 mb-2">REPORT BCBS 239</h1>
+                    <h2 class="text-lg font-semibold text-gray-800 mb-2">Grandi Esposizioni</h2>
+                    <p class="text-gray-600">Conforme alle Disposizioni Banca d'Italia</p>
+                  </div>
+
+                  <!-- Institution Info -->
+                  <div class="border border-gray-300 rounded-lg p-6 mb-8">
+                    <h3 class="font-semibold text-gray-900 mb-4">Informazioni Istituto</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span class="text-gray-600">Denominazione:</span>
+                        <p class="font-medium">Banca Italiana S.p.A.</p>
+                      </div>
+                      <div>
+                        <span class="text-gray-600">Codice ABI:</span>
+                        <p class="font-medium">05584</p>
+                      </div>
+                      <div>
+                        <span class="text-gray-600">Codice LEI:</span>
+                        <p class="font-medium">IT123456789012345678</p>
+                      </div>
+                      <div>
+                        <span class="text-gray-600">Data Riferimento:</span>
+                        <p class="font-medium">30 Settembre 2025</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Report Summary -->
+                  <div class="border border-gray-300 rounded-lg p-6 mb-8">
+                    <h3 class="font-semibold text-gray-900 mb-4">Riepilogo Report</h3>
+                    <div class="space-y-3 text-sm">
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Punteggio Conformità BCBS 239:</span>
+                        <span class="font-semibold">87.2%</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Numero Grandi Esposizioni:</span>
+                        <span class="font-semibold">15</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Violazioni Critiche:</span>
+                        <span class="font-semibold text-red-600">3</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Record Analizzati:</span>
+                        <span class="font-semibold">125.000</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Footer -->
+                  <div class="absolute bottom-8 left-8 right-8">
+                    <div class="text-center text-xs text-gray-500 border-t border-gray-300 pt-4">
+                      <p>Documento generato automaticamente da ComplianceCore</p>
+                      <p>Conforme alle disposizioni Banca d'Italia del 15 Dicembre 2023</p>
+                      <p class="mt-2">Pagina 1 di 15</p>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div *ngSwitchCase="2" class="page-preview mx-auto" style="width: 600px; height: 800px; display: block;">
                 <!-- Page 2 content (sommario esecutivo) -->
